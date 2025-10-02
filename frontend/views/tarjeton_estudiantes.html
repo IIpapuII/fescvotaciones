@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidatos Sala General - FESC Elecciones 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
+        }
+
+        /* Header */
+        .header {
+            background-color: #ffffff;
+            padding: 24px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e5e5;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .header.scrolled {
+            padding: 16px 60px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .election-badge {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #e31e24 0%, #b71c1c 100%);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(227, 30, 36, 0.2);
+        }
+
+        .ballot-icon {
+            font-size: 28px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .election-info {
+            color: white;
+        }
+
+        .election-title {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            line-height: 1.3;
+            opacity: 0.95;
+        }
+
+        .graduados-title {
+            font-size: 36px;
+            font-weight: 300;
+            color: #e31e24;
+            letter-spacing: -0.5px;
+        }
+
+        .fesc-logo {
+            height: 70px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+        }
+
+        /* Navigation */
+        .nav-bar {
+            padding: 20px 60px;
+            background-color: #fafafa;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background-color: #666;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #555;
+            transform: translateX(-4px);
+        }
+
+        /* Section Title */
+        .section-header {
+            background: #e31e24;
+            padding: 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Añadiendo elementos decorativos diagonales con patrón FESC */
+        .section-header::before,
+        .section-header::after {
+            content: 'FESC FESC FESC FESC';
+            position: absolute;
+            top: 0;
+            width: 35%;
+            height: 100%;
+            background: #c41e24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.15);
+            letter-spacing: 8px;
+            word-spacing: 20px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .section-header::before {
+            left: 0;
+            clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
+            transform-origin: left center;
+        }
+
+        .section-header::after {
+            right: 0;
+            clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+            transform-origin: right center;
+        }
+
+        .section-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+            text-transform: uppercase;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Candidates Container */
+        .candidates-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 60px;
+        }
+
+        .planchas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 48px;
+        }
+
+        /* Plancha Card */
+        .plancha-card {
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 16px;
+            padding: 40px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .plancha-card:hover {
+            border-color: #e31e24;
+            box-shadow: 0 8px 32px rgba(227, 30, 36, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .candidates-photos {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .candidate-photo {
+            width: 180px;
+            height: 220px;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            transition: transform 0.3s ease;
+        }
+
+        .candidate-photo:hover {
+            transform: scale(1.05);
+        }
+
+        .plancha-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 110px;
+            height: 110px;
+            background: white;
+            border: 3px solid #e31e24;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(227, 30, 36, 0.25);
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .plancha-card:hover .plancha-badge {
+            transform: translate(-50%, -50%) scale(1.1) rotate(5deg);
+        }
+
+        .plancha-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .plancha-number {
+            font-size: 44px;
+            font-weight: 700;
+            color: #e31e24;
+            line-height: 1;
+        }
+
+        .candidates-info {
+            display: flex;
+            justify-content: space-around;
+            gap: 24px;
+        }
+
+        .candidate-info {
+            flex: 1;
+            text-align: center;
+        }
+
+        .candidate-role {
+            display: inline-block;
+            background-color: #e31e24;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.5s ease;
+        }
+
+        .candidate-role.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .candidate-name {
+            background: linear-gradient(135deg, #e31e24 0%, #b71c1c 100%);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 15px;
+            line-height: 1.4;
+            box-shadow: 0 4px 12px rgba(227, 30, 36, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            padding: 40px 60px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 24px;
+                padding: 20px;
+            }
+
+            .logo-section {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .nav-bar {
+                padding: 20px;
+            }
+
+            .section-header {
+                padding: 32px 20px;
+            }
+
+            .candidates-section {
+                padding: 40px 20px;
+            }
+
+            .planchas-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .candidates-photos {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .plancha-badge {
+                width: 90px;
+                height: 90px;
+            }
+
+            .plancha-number {
+                font-size: 36px;
+            }
+        }
+
+        /* Fade-in Animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-section">
+            <img src="../public/Logo votacion.png" alt="FESC Logo" class="vote-logo">
+        </div>
+        <div>
+            <h1 class="titulo-evento">Tiempo faltante:</h1>
+
+            <div class="contador">
+                <div class="countdown">
+                    <div class="time-box">
+                        <div id="days" class="flip-card">00</div>
+                    </div>
+                    <div class="time-box">
+                        <div id="hours" class="flip-card">00</div>
+                    </div>
+                    <div class="time-box">
+                        <div id="minutes" class="flip-card">00</div>
+                    </div>
+                    <div class="time-box">
+                        <div id="seconds" class="flip-card">00</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <img src="../public/Logo-FESC+30.png" alt="FESC Logo" class="fesc-logo">
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-bar fade-in">
+        <a href="index.html" class="back-button">
+            <span>←</span>
+            <span>Volver</span>
+        </a>
+    </nav>
+
+    <!-- Section Header -->
+    <div class="section-header fade-in">
+        <h1 class="section-title">Candidatos Sala General</h1>
+    </div>
+
+    <!-- Candidates Section -->
+    <section class="candidates-section">
+        <div class="planchas-grid">
+            <!-- Plancha 01 -->
+            <div class="plancha-card fade-in">
+                <div class="candidates-photos">
+                    <div class="candidate-photo">Foto Principal</div>
+                    <div class="candidate-photo">Foto Suplente</div>
+                </div>
+                <div class="plancha-badge">
+                    <span class="plancha-label">Plancha</span>
+                    <span class="plancha-number">01</span>
+                </div>
+                <div class="candidates-info">
+                    <div class="candidate-info">
+                        <div class="candidate-role">Principal</div>
+                        <div class="candidate-name">Wilson Raúl<br>Vargas Rojas</div>
+                    </div>
+                    <div class="candidate-info">
+                        <div class="candidate-role">Suplente</div>
+                        <div class="candidate-name">Claudia Mabel<br>Sanguino Pérez</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Plancha 02 -->
+            <div class="plancha-card fade-in">
+                <div class="candidates-photos">
+                    <div class="candidate-photo">Foto Principal</div>
+                    <div class="candidate-photo">Foto Suplente</div>
+                </div>
+                <div class="plancha-badge">
+                    <span class="plancha-label">Plancha</span>
+                    <span class="plancha-number">02</span>
+                </div>
+                <div class="candidates-info">
+                    <div class="candidate-info">
+                        <div class="candidate-role">Principal</div>
+                        <div class="candidate-name">Cristian Camilo<br>Contreras Quintana</div>
+                    </div>
+                    <div class="candidate-info">
+                        <div class="candidate-role">Suplente</div>
+                        <div class="candidate-name">Paola Stefania<br>Acevedo Ramírez</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">&copy; 2025 FESC - Educación Superior Comfanorte</p>
+        <p class="footer-text">Elecciones de Representantes - Cúcuta</p>
+    </footer>
+
+    <!-- JavaScript for Animations -->
+    <script>
+        // Animación del header al hacer scroll
+        const header = document.querySelector('.header');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Intersection Observer para animaciones de fade-in
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Animación escalonada de las tarjetas de planchas
+        const planchaCards = document.querySelectorAll('.plancha-card');
+        planchaCards.forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.15}s`;
+        });
+
+        // Animación de hover para las fotos de candidatos
+        const candidatePhotos = document.querySelectorAll('.candidate-photo');
+        candidatePhotos.forEach(photo => {
+            photo.addEventListener('mouseenter', function () {
+                this.style.transform = 'scale(1.05)';
+            });
+
+            photo.addEventListener('mouseleave', function () {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Animación de los elementos decorativos al cargar
+        window.addEventListener('load', () => {
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideInLeft {
+                    from {
+                        transform: translateX(-100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                
+                @keyframes slideInRight {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                
+                .section-header::before {
+                    animation: slideInLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                }
+                
+                .section-header::after {
+                    animation: slideInRight 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+
+        // Animación de hover para el botón de volver
+        const backButton = document.querySelector('.back-button');
+        backButton.addEventListener('mouseenter', function () {
+            this.style.transform = 'translateX(-8px)';
+        });
+
+        backButton.addEventListener('mouseleave', function () {
+            this.style.transform = 'translateX(0)';
+        });
+
+        // Animación de las etiquetas de rol
+        const roleLabels = document.querySelectorAll('.candidate-role');
+        roleLabels.forEach((label, index) => {
+            setTimeout(() => {
+                label.style.opacity = '0';
+                label.style.transform = 'translateY(-10px)';
+
+                setTimeout(() => {
+                    label.classList.add('visible');
+                }, 100);
+            }, 500 + (index * 100));
+        });
+
+        // Efecto parallax suave en el header de sección
+        const sectionHeader = document.querySelector('.section-header');
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            if (sectionHeader && scrolled < 500) {
+                sectionHeader.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
+        });
+    </script>
+</body>
+
+</html>
