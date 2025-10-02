@@ -176,6 +176,7 @@
             text-align: center;
             font-weight: 500;
             letter-spacing: 1px;
+            margin-top: 30px;
         }
 
         .subtitulo-decorado {
@@ -246,19 +247,15 @@
             text-align: center;
         }
 
-         html, body { overflow-x: hidden; }
+        html,
+        body {
+            overflow-x: hidden;
+        }
     </style>
 </head>
 
 <body>
     <site-header></site-header>
-
-    <nav class="nav-bar">
-        <a href="../index.html" class="back-button">
-            <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
-            <span>Volver</span>
-        </a>
-    </nav>
 
     <h2 class="titulo-decorado">. Graduados .</h2>
 
@@ -333,6 +330,16 @@
 
         </div>
     </section>
+
+    <nav style="display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;">
+        <a href="../index.html" class="back-button">
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+            <span>Volver</span>
+        </a>
+    </nav>
 
     <site-footer></site-footer>
 </body>

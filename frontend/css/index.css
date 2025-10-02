@@ -19,7 +19,7 @@ body {
 /* Hero Section */
 .hero {
     position: relative;
-    min-height: 400px;
+    min-height: 480px;
     padding: 0 60px;
     display: flex;
     align-items: center;
@@ -34,8 +34,18 @@ body {
     background-color: transparent;
     background-blend-mode: normal;
     background-size: cover;
-    background-position: center;
+    background-position: center 33%;
     background-repeat: no-repeat;
+}
+
+/* Dark overlay for better text contrast */
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    pointer-events: none;
+    z-index: 0;
 }
 
 
@@ -292,10 +302,97 @@ body {
     line-height: 1.7;
 }
 
+/* Highlights (alternating image + text) */
+.highlights-section {
+    max-width: 1200px;
+    margin: 40px auto 100px;
+    padding: 0 60px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.highlights-section.visible { opacity: 1; transform: translateY(0); }
+
+.highlights-container { display: flex; flex-direction: column; gap: 28px; }
+
+.highlights-title { 
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #1a1a1a;
+    margin: 0 auto 16px;
+}
+
+.highlight { display: grid; grid-template-columns: 1.1fr 1fr; gap: 28px; align-items: center; opacity: 0; transform: translateY(20px); transition: all .6s ease; }
+.highlight.visible { opacity: 1; transform: translateY(0); }
+.highlight.reverse { grid-template-columns: 1fr 1.1fr; }
+.highlight.reverse .highlight-media { order: 2; }
+.highlight.reverse .highlight-text { order: 1; }
+
+.highlight-media { position: relative; overflow: hidden; border-radius: 12px; box-shadow: 0 10px 24px rgba(0,0,0,0.12); }
+.highlight-media img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    transform: scale(1);
+    transition: transform .4s ease, filter .4s ease;
+    filter: brightness(0.95) contrast(1.05);
+}
+.highlight:hover .highlight-media img { transform: scale(1.04); filter: brightness(0.9) contrast(1.1); }
+
+.highlight-text h3 { font-size: 28px; margin-bottom: 10px; color: #1a1a1a; }
+.highlight-text p { font-size: 16px; color: #555; }
+
+/* Hero Info banner (in-hero schedules) */
+.hero-info {
+    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.time-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: linear-gradient(135deg, #e31e24 0%, #b71c1c 100%);
+    color: #fff;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: .2px;
+    margin: 0 auto 12px;
+}
+
+.time-box .material-symbols-outlined { font-size: 18px; }
+
+.schedule {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+    gap: 12px;
+    color: #fff;
+}
+
+.schedule-item {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+}
+
+.schedule-title { font-weight: 700; margin-bottom: 4px; }
+.schedule-time { font-size: 14px; opacity: .95; }
+
 /* Responsive */
 @media (max-width: 768px) {
     .header {
-        flex-direction: column;
+        flex-direction: row;
         gap: 24px;
         padding: 20px;
     }
@@ -306,8 +403,9 @@ body {
     }
 
     .hero {
-        min-height: 400px;
+        min-height: 460px;
         padding: 0 20px;
+        background-position: center 70%;
     }
 
     .hero-title {
@@ -325,6 +423,14 @@ body {
     .info-section {
         padding: 40px 20px;
     }
+
+    .highlights-section { padding: 0 20px; margin: 20px auto 60px; }
+    .highlight,
+    .highlight.reverse { grid-template-columns: 1fr; }
+    .highlight-media img { height: 200px; }
+
+    .hero-info { padding: 14px; }
+    .schedule { grid-template-columns: 1fr; }
 
     .candidates-section {
         padding: 0 20px;

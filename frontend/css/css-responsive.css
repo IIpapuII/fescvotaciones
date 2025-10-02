@@ -1,0 +1,95 @@
+/* Responsive overrides for Site Header (shadow DOM safe if imported by component) */
+
+/* Base tweaks (small visual balance) */
+:root { --header-gap: 48px; }
+
+/* Large screens (>= 1200px) */
+@media (min-width: 1200px) {
+  .header { padding: 16px 80px; }
+  .logo-section { gap: var(--header-gap); }
+  .vote-logo { width: 17em; }
+}
+
+/* Medium screens (<= 1024px) */
+@media (max-width: 1024px) {
+  .header { padding: 14px 40px; }
+  .logo-section { gap: 32px; }
+  .vote-logo { width: 13em; }
+  .fesc-logo { height: 58px; }
+  .titulo-evento { font-size: 1.35rem; }
+  .countdown { gap: 8px; }
+  .time-box { width: 2.1em; }
+}
+
+/* Tablets (<= 768px) */
+@media (max-width: 768px) {
+  .header { flex-direction: row; gap: 12px; padding: 12px 16px; }
+  .logo-section { flex-direction: column; gap: 14px; }
+  .vote-logo { width: 12em; }
+  /* Mostrar ambos logos en móvil */
+  .fesc-logo { display: block; height: 52px; }
+  /* Ocultar texto de título del contador */
+  .titulo-evento { display: none !important; }
+  .titulo-evento { font-size: 1.25rem; }
+  /* Convierte el contador en un botón flotante */
+  .countdown { 
+    position: fixed; 
+    bottom: 16px; 
+    right: 16px; 
+    gap: 6px; 
+    background: linear-gradient(135deg, #e31e24 0%, #b71c1c 100%);
+    padding: 10px 12px; 
+    border-radius: 999px; 
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+    z-index: 1100; 
+  }
+  .time-box { width: 2em; padding: 2px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); }
+  .countdown:hover { transform: translateY(-2px); transition: transform .2s ease; }
+  .header.scrolled { padding: 10px 14px; }
+}
+
+/* Phones (<= 480px) */
+@media (max-width: 480px) {
+  .header { padding: 10px 14px; gap: 10px; }
+  .vote-logo { width: 10.5em; }
+  .fesc-logo { display: block; height: 46px; }
+  .titulo-evento { display: none !important; }
+  .titulo-evento { font-size: 1.1rem; }
+  .countdown { bottom: 14px; right: 14px; gap: 4px; padding: 8px 10px; }
+  .time-box { width: 1.9em; padding: 1px; font-size: 0.95rem; }
+  .header.scrolled { padding: 8px 12px; }
+}
+
+/* Ultra-small devices (<= 360px) */
+@media (max-width: 360px) {
+  .header { padding: 8px 10px; gap: 8px; }
+  .vote-logo { width: 9.5em; }
+  .fesc-logo { display: block; height: 42px; }
+  .titulo-evento { display: none !important; }
+  .titulo-evento { font-size: 1.05rem; }
+  .countdown { bottom: 12px; right: 12px; padding: 7px 9px; }
+  .time-box { width: 1.8em; }
+}
+
+/* Estado colapsado del contador (aplica en todos los tamaños) */
+.countdown.collapsed { padding: 10px 12px; gap: 0; }
+.countdown.collapsed .time-box { display: none; }
+.countdown.collapsed::before { content: "\23F1"; /* ⏱ */ color: #fff; font-weight: 700; font-size: 18px; }
+
+/* High-density screens: crisp logos */
+@media (min-resolution: 2dppx) {
+  .vote-logo, .fesc-logo { image-rendering: -webkit-optimize-contrast; }
+}
+
+/* Header when scrolled */
+@media (max-width: 768px) {
+  .header.scrolled { padding: 12px 16px; }
+}
+
+/* Accessibility: prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .header { transition: none !important; }
+}
+
+/* Note: To apply inside the shadow DOM, ensure the header component also loads this file.
+   If using pages outside shadow DOM, these selectors still match if the header markup is not encapsulated. */

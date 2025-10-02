@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FESC Elecciones 2025 - Graduados</title>
+    <title>FESC Elecciones 2025</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
 </head>
 
@@ -20,11 +21,29 @@
         <div class="hero-content">
             <h1 class="hero-title">Ejerce tu Derecho al Voto</h1>
             <p class="hero-subtitle">
-                Tu voz importa. Participa en el proceso democrático de nuestra institución y construye el futuro de FESC.
+                Tu voz importa. Participa en el proceso democrático de nuestra institución y construye el futuro de
+                FESC.
             </p>
+            <div class="hero-info">
+                <div class="time-box">
+                    <span class="material-symbols-outlined" aria-hidden="true">schedule</span>
+                    <span>Horarios de votación</span>
+                </div>
+                <div class="schedule">
+                    <div class="schedule-item">
+                        <div class="schedule-title"><strong>Mesa 1</strong> Cancha FESC • <strong>Mesa 2</strong> Parque
+                            Banderas</div>
+                        <div class="schedule-time">Lunes a viernes: 8:00 am – 11:00 am, 2:00 pm – 5:00 pm y 6:00 pm –
+                            8:30 pm</div>
+                    </div>
+                    <div class="schedule-item">
+                        <div class="schedule-title"><strong>Mesa 3</strong> • Cancha FESC </div>
+                        <div class="schedule-time">Sabado: 8:00 am – 11:00 am y 1:00 pm – 5:00 pm</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
-
 
     <section class="candidates-section fade-in">
         <h2 class="candidates-title">Conoce a Nuestros Candidatos</h2>
@@ -40,11 +59,11 @@
 
             <div class="category-card">
                 <div class="category-icon"><span class="material-symbols-outlined">school</span></div>
-                <h2 class="category-title">Profesores</h2>
+                <h2 class="category-title">Docentes</h2>
                 <p class="category-description">
                     Descubre las propuestas del profesorado y cómo buscan aportar al Consejo Superior.
                 </p>
-                <a href="views/tarjeton_estudiantes.html" class="category-button">Ver Candidatos</a>
+                <a href="views/tarjeton_docentes.html" class="category-button">Ver Candidatos</a>
             </div>
 
             <div class="category-card">
@@ -60,13 +79,19 @@
 
     <section class="info-section fade-in">
         <div class="info-container">
-            <h2 class="info-title">Información del Proceso Electoral</h2>
+            <h2 class="candidates-title">Información del Proceso Electoral</h2>
             <div class="info-grid">
                 <div class="info-card">
                     <h3 class="info-card-title">¿Quiénes pueden votar?</h3>
                     <p class="info-card-text">
                         Todos los graduados activos de FESC tienen derecho a participar en este proceso democrático.
                     </p>
+                    <ul class="info-card-text">
+                        <li>Articulación y estudiantes matriculados (presencial, distancia o virtual) votan por
+                            Estudiantes.</li>
+                        <li>Docentes votan por Docentes.</li>
+                        <li>Egresados/Graduados votan por Egresados.</li>
+                    </ul>
                 </div>
                 <div class="info-card">
                     <h3 class="info-card-title">¿Cómo votar?</h3>
@@ -85,7 +110,6 @@
             </div>
         </div>
     </section>
-
     <site-footer></site-footer>
     <script>
         // Animación de scroll suave
@@ -102,21 +126,7 @@
             });
         });
 
-        // Animación del header al hacer scroll
-        let lastScroll = 0;
-        const header = document.querySelector('.header');
 
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset;
-
-            if (currentScroll > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-
-            lastScroll = currentScroll;
-        });
 
         // Intersection Observer para animaciones de fade-in
         const observerOptions = {
@@ -160,6 +170,22 @@
         infoCards.forEach(card => {
             infoObserver.observe(card);
         });
+
+        // Animación de entrada para imágenes y textos de "highlights"
+        const highlights = document.querySelectorAll('.highlight');
+        const highlightsObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    // Stagger basado en su posición en el DOM
+                    const idx = Array.from(highlights).indexOf(entry.target);
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, idx * 120);
+                }
+            });
+        }, observerOptions);
+
+        highlights.forEach(h => highlightsObserver.observe(h));
 
         // Animación de hover mejorada para botones
         const buttons = document.querySelectorAll('.category-button');
@@ -207,7 +233,23 @@
         `;
         document.head.appendChild(style);
 
-        const targetDate = new Date("2025-11-15T00:00:00").getTime();
+        // =====================
+        // Fecha de elecciones (fácil de editar)
+        // Edita estos valores sin tocar la lógica:
+        const ELECTION_DATE = {
+            year: 2025,
+            month: 10,   // 1-12 (Octubre = 10)
+            day: 6,
+            hour: 6,     // 0-23 (6 am)
+            minute: 0
+        };
+        // Expone la fecha a otros componentes (header usa esto)
+        window.ELECTION_DATE = ELECTION_DATE;
+        function getBogotaTimestamp({ year, month, day, hour, minute }) {
+            return Date.UTC(year, month - 1, day, hour + 5, minute, 0);
+        }
+
+        const targetDate = getBogotaTimestamp(ELECTION_DATE);
 
         function updateCountdown() {
             const now = new Date().getTime();
@@ -226,16 +268,16 @@
 
         updateCountdown();
         setInterval(updateCountdown, 1000);
-    
+
         // Adjust body padding to actual header height to avoid gaps
-        function updateHeaderOffset(){
+        function updateHeaderOffset() {
             const headerEl = document.querySelector(".header");
-            if(headerEl){
+            if (headerEl) {
                 const h = headerEl.offsetHeight;
-                document.documentElement.style.setProperty("--header-height", h+"px");
+                document.documentElement.style.setProperty("--header-height", h + "px");
             }
         }
-        
+
         // Initial set and on resize
         window.addEventListener("DOMContentLoaded", updateHeaderOffset);
         window.addEventListener("load", updateHeaderOffset);
@@ -243,11 +285,11 @@
 
         // Also update when header style changes on scroll
         const _origScrollHandler = window.onscroll;
-        window.addEventListener("scroll", ()=>{
+        window.addEventListener("scroll", () => {
             updateHeaderOffset();
         });
     </script>
-  <script src="js/components.js"></script>
+    <script src="js/components.js"></script>
 </body>
 
 </html>

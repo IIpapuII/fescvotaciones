@@ -11,13 +11,15 @@
       const wrap = document.createElement('div');
       wrap.className = 'header';
       const cssUrl = resolveFromScript('../css/header.css');
+      const responsiveCssUrl = resolveFromScript('../css/css-responsive.css');
       const htmlUrl = resolveFromScript((location.pathname.indexOf('/views/') !== -1 || location.pathname.indexOf('\\\\views\\\\') !== -1) ? '../components/header.views.html' : '../components/header.html');
-      const [cssText, htmlText] = await Promise.all([
+      const [baseCss, responsiveCss, htmlText] = await Promise.all([
         fetch(cssUrl).then(r=>r.text()),
+        fetch(responsiveCssUrl).then(r=>r.text()).catch(()=>''),
         fetch(htmlUrl).then(r=>r.text())
       ]);
       const style = document.createElement('style');
-      style.textContent = cssText;
+      style.textContent = `${baseCss}\n/* responsive overrides */\n${responsiveCss}`;
       wrap.innerHTML = htmlText;
       root.appendChild(style);
       root.appendChild(wrap);
@@ -36,8 +38,23 @@
       window.addEventListener('scroll', onScroll);
       setHeaderHeight();
 
-      // Countdown logic
-      const targetDate = new Date('2025-11-15T00:00:00').getTime();
+      // Countdown logic (reads global config if available)
+      function computeBogotaUTC(dateObj){
+        if(!dateObj) return null;
+        var y = dateObj.year, m = dateObj.month, d = dateObj.day, hh = dateObj.hour || 0, mm = dateObj.minute || 0;
+        return Date.UTC(y, (m||1)-1, d, (hh||0)+5, mm||0, 0);
+      }
+      let targetDate = null;
+      if(window.ELECTION_DATE){
+        targetDate = computeBogotaUTC(window.ELECTION_DATE);
+      } else if(window.ELECTION_TARGET_ISO){
+        try { targetDate = new Date(window.ELECTION_TARGET_ISO).getTime(); } catch(e){}
+      }
+      if(!targetDate){
+        // Fallback por si no hay configuración global
+        // Lunes 6 de octubre 2025, 6:00 am Bogotá (UTC-5)
+        targetDate = new Date('2025-10-06T06:00:00-05:00').getTime();
+      }
       function updateCountdown(){
         const now = Date.now();
         const d = targetDate - now;
@@ -54,6 +71,19 @@
       }
       updateCountdown();
       setInterval(updateCountdown, 1000);
+
+      // Toggle collapse on mobile: make countdown act like a FAB button
+      const countdownEl = headerEl.querySelector('.countdown');
+      if (countdownEl) {
+        countdownEl.style.cursor = 'pointer';
+        countdownEl.setAttribute('role', 'button');
+        countdownEl.setAttribute('aria-label', 'Mostrar/ocultar contador');
+        countdownEl.setAttribute('aria-expanded', 'true');
+        countdownEl.addEventListener('click', () => {
+          const collapsed = countdownEl.classList.toggle('collapsed');
+          countdownEl.setAttribute('aria-expanded', String(!collapsed));
+        });
+      }
     }
   }
 

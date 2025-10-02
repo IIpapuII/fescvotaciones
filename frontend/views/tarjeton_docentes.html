@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+ï»¿<!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tarjetón Estudiantes - FESC Elecciones 2025</title>
+    <title>TarjetÃ³n Docentes - FESC Elecciones 2025</title>
 
     <!-- Fuentes y estilos globales -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
@@ -17,7 +17,7 @@
     <script src="../js/components.js"></script>
 
     <style>
-        /* Reset minimal y compensaci?n del header fijo */
+        /* Reset minimal y compensaciï¿½n del header fijo */
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #ffffff;
@@ -45,7 +45,7 @@
             font-weight: 600;
         }
 
-        /* T?tulo de secci?n */
+        /* Tï¿½tulo de secciï¿½n */
         .section-title {
             max-width: 1200px;
             margin: 24px auto 0;
@@ -203,11 +203,7 @@
         }
 
         .imagen-tarjeton img {
-            display: block;
-            margin: 0 auto;
-            width: 100%;
-            max-width: 520px;
-            height: auto;
+            display: inline-block;
             transition: transform 0.5s ease;
         }
 
@@ -236,19 +232,6 @@
             .candidates-info {
                 grid-template-columns: 1fr;
             }
-
-            /* Títulos responsivos */
-            .titulo-decorado { font-size: 2.2rem; margin-top: 18px; }
-            .subtitulo-decorado { font-size: 1.3rem; padding: 14px 0; margin-bottom: 36px; }
-
-            /* Tarjetones más compactos */
-            .plancha-card { padding: 14px; }
-            .plancha-header { gap: 10px; margin-bottom: 12px; }
-            .plancha-chip { font-size: 11px; padding: 5px 9px; }
-            .plancha-num { width: 26px; height: 26px; font-size: 11px; }
-
-            /* Imagen del tarjetón 100% ancho contenedor */
-            .imagen-tarjeton img { max-width: 100%; }
         }
 
         .section-title {
@@ -264,26 +247,15 @@
             grid-template-columns: 1fr;
         }
 
-        html,
-        body {
-            overflow-x: hidden;
-        }
-
-        /* Extra pequeño */
-        @media (max-width: 420px) {
-            .titulo-decorado { font-size: 1.9rem; }
-            .subtitulo-decorado { font-size: 1.15rem; padding: 12px 0; }
-            .plancha-card { padding: 12px; }
-            .plancha-chip { font-size: 10px; }
-            .plancha-num { width: 24px; height: 24px; font-size: 10px; }
-        }
+        /* Evita desplazamiento horizontal */
+        html, body { overflow-x: hidden; }
     </style>
 </head>
 
 <body>
     <site-header></site-header>
 
-    <h2 class="titulo-decorado">. Estudiantes .</h2>
+    <h2 class="titulo-decorado">. Docentes .</h2>
 
     <section class="candidates-sections">
         <h2 class="subtitulo-decorado">Candidatos sala general</h2>
@@ -295,7 +267,8 @@
                     <span class="plancha-num">01</span>
                 </div>
                 <div class="imagen-tarjeton">
-                    <img src="../public/estudiantes/estudiantes-01.png" alt="FESC">
+                    <img src="../public/docentes/docente-01.png" alt="FESC"
+                        style="max-width: 500px; width: -webkit-fill-available;">
                 </div>
             </div>
 
@@ -306,29 +279,8 @@
                     <span class="plancha-num">02</span>
                 </div>
                 <div class="imagen-tarjeton">
-                    <img src="../public/estudiantes/estudiantes-02.png" alt="FESC">
-                </div>
-            </div>
-
-            <!-- Plancha 03 -->
-            <div class="plancha-card">
-                <div class="plancha-header">
-                    <span class="plancha-chip">Plancha</span>
-                    <span class="plancha-num">03</span>
-                </div>
-                <div class="imagen-tarjeton">
-                    <img src="../public/estudiantes/estudiantes-03.png" alt="FESC">
-                </div>
-            </div>
-
-            <!-- Plancha 04 -->
-            <div class="plancha-card">
-                <div class="plancha-header">
-                    <span class="plancha-chip">Plancha</span>
-                    <span class="plancha-num">04</span>
-                </div>
-                <div class="imagen-tarjeton">
-                    <img src="../public/estudiantes/estudiantes-04.png" alt="FESC">
+                    <img src="../public/docentes/docente-02.png" alt="FESC"
+                        style="max-width: 500px; width: -webkit-fill-available;">
                 </div>
             </div>
 
@@ -345,7 +297,8 @@
                     <span class="plancha-num">01</span>
                 </div>
                 <div class="imagen-tarjeton">
-                    <img src="../public/estudiantes/estudiantes-05.png" alt="FESC">
+                    <img src="../public/docentes/docente-03.png" alt="FESC"
+                        style="max-width: 500px; width: -webkit-fill-available;">
                 </div>
             </div>
 
@@ -356,7 +309,8 @@
                     <span class="plancha-num">02</span>
                 </div>
                 <div class="imagen-tarjeton">
-                    <img src="../public/estudiantes/estudiantes-06.png" alt="FESC">
+                    <img src="../public/docentes/docente-04.png" alt="FESC"
+                        style="max-width: 500px; width: -webkit-fill-available;">
                 </div>
             </div>
         </div>
@@ -372,23 +326,13 @@
                     <span class="plancha-num">01</span>
                 </div>
                 <div class="imagen-tarjeton">
-                    <img src="../public/estudiantes/estudiantes-07.png" alt="FESC">
+                    <img src="../public/docentes/docente-05.png" alt="FESC"
+                        style="max-width: 500px; width: -webkit-fill-available;">
                 </div>
             </div>
-
-            <!-- Plancha 02 -->
-            <div class="plancha-card">
-                <div class="plancha-header">
-                    <span class="plancha-chip">Plancha</span>
-                    <span class="plancha-num">02</span>
-                </div>
-                <div class="imagen-tarjeton">
-                    <img src="../public/estudiantes/estudiantes-08.png" alt="FESC">
-                </div>
-            </div>
-        </div>
     </section>
-    <nav style="display: flex;
+
+        <nav style="display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;">
