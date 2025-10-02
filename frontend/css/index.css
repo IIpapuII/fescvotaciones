@@ -296,10 +296,38 @@ body {
     margin-bottom: 12px;
 }
 
+.info-card-title .material-symbols-outlined {
+    font-size: 20px;
+    vertical-align: -3px;
+    margin-right: 6px;
+}
+
 .info-card-text {
     font-size: 15px;
     color: #666;
     line-height: 1.7;
+}
+
+/* Accented info card for high-contrast notices */
+.info-card-accent {
+    background: linear-gradient(135deg, #e31e24 0%, #b71c1c 100%);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.22);
+    box-shadow: 0 8px 20px rgba(227, 30, 36, 0.25);
+}
+.info-card-accent .info-card-title { color: #fff; }
+.info-card-accent .info-card-text { color: #fff; }
+.info-card-accent .material-symbols-outlined { color: #fff; }
+
+/* Make the accent card span full grid width and center content */
+.info-grid .info-card-accent {
+    grid-column: 1 / -1;
+    justify-self: center;
+    text-align: center;
+}
+
+@media (min-width: 769px) {
+    .info-grid .info-card-accent { max-width: 1200px; }
 }
 
 /* Highlights (alternating image + text) */

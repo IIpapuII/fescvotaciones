@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="../css/index.css" />
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="../css/tarjetones.css" />
 
     <!-- Componentes (header/footer) -->
     <script src="../js/components.js"></script>
@@ -181,24 +182,25 @@
 
         .subtitulo-decorado {
             font-family: 'Segoe UI', sans-serif;
-            color: #d40000;
-            /* rojo fuerte */
+            color: #ffffff;
             font-size: 2rem;
-            /* Full-bleed banner */
             display: block;
             width: 100vw;
             margin-left: calc(50% - 50vw);
             margin-right: calc(50% - 50vw);
-            background: url("../public/graduados/banner titulo.svg") center/cover no-repeat;
+            background: linear-gradient(90deg, #b71c1c 0%, #e31e24 50%, #b71c1c 100%);
             text-align: center;
             text-transform: uppercase;
             font-weight: 900;
-            padding: 20px 0;
+            padding: 22px 0;
             margin-bottom: 60px;
-            /* height of the band */
         }
 
         @media (max-width: 768px) {
+            /* Títulos responsivos */
+            .titulo-decorado { font-size: 2.2rem; margin-top: 18px; }
+            .subtitulo-decorado { font-size: 1.3rem; padding: 14px 0; margin-bottom: 36px; }
+
             .nav-bar {
                 padding: 12px 20px;
             }
@@ -216,9 +218,16 @@
             }
 
             .candidates-photos,
-            .candidates-info {
-                grid-template-columns: 1fr;
-            }
+            .candidates-info { grid-template-columns: 1fr; }
+
+            /* Tarjetones más compactos */
+            .plancha-card { padding: 14px; }
+            .plancha-header { gap: 10px; margin-bottom: 12px; }
+            .plancha-chip { font-size: 11px; padding: 5px 9px; }
+            .plancha-num { width: 26px; height: 26px; font-size: 11px; }
+
+            /* Imagen del tarjetón 100% ancho contenedor */
+            .imagen-tarjeton img { max-width: 100%; }
         }
 
         .section-title {
@@ -235,7 +244,11 @@
         }
 
         .imagen-tarjeton img {
-            display: inline-block;
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 520px;
+            height: auto;
             transition: transform 0.5s ease;
         }
 
@@ -289,7 +302,7 @@
         </div>
     </section>
     <section class="candidates-sections">
-        <h2 class="subtitulo-decorado">. Candidatos consejo superior .</h2>
+        <h2 class="subtitulo-decorado">Candidatos consejo superior</h2>
 
         <div class="planchas-grid">
             <!-- Plancha 01 -->
