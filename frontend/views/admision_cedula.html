@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Como votar - FESC Elecciones 2025</title>
+
+    <!-- Fuentes y estilos globales -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="../css/index.css" />
+    <link rel="icon" href="../public/favicon.png" type="image/png" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    <!-- Componentes (header/footer) -->
+    <script src="../js/components.js"></script>
+</head>
+
+<style>
+    /* Reset minimal y compensaci�n del header fijo */
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #ffffff;
+        color: #1a1a1a;
+        padding-top: var(--header-height);
+    }
+
+    /* Nav simple de retorno */
+    .nav-bar {
+        padding: 16px 60px;
+        background-color: #fafafa;
+        border-bottom: 1px solid #eee;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background-color: #666;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    /* T�tulo de secci�n */
+    .section-title {
+        max-width: 1200px;
+        margin: 24px auto 0;
+        padding: 0 60px;
+        font-size: 28px;
+        font-weight: 800;
+        color: #e31e24;
+    }
+
+    /* Contenedor de planchas */
+    .candidates-sections {
+        max-width: 1200px;
+        margin: 16px auto 60px;
+        padding: 0 60px;
+    }
+
+    .planchas-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(320px, 1fr));
+        gap: 24px;
+        justify-content: center;
+        /* center grid as a whole */
+    }
+
+    /* Center single leftover card on last row by spanning columns */
+    .planchas-grid>.plancha-card:nth-last-child(1):nth-child(odd) {
+        grid-column: 1 / -1;
+        justify-self: center;
+        max-width: 720px;
+
+    }
+
+    .plancha-card {
+        background: #fff;
+        border: 1px solid #e5e5e5;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .plancha-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .plancha-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        background: #fff4f4;
+        color: #b71c1c;
+        border: 1px solid #f1c0c0;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .plancha-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background: #e31e24;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .candidates-photos {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .candidate-photo {
+        height: 200px;
+        background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #888;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .candidates-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .candidate-info {
+        background: #fafafa;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 10px 12px;
+    }
+
+    .candidate-role {
+        font-size: 12px;
+        font-weight: 800;
+        color: #b71c1c;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+
+    .candidate-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: #333;
+        line-height: 1.35;
+    }
+
+    .titulo-decorado {
+        font-family: 'Segoe UI', sans-serif;
+        color: #d40000;
+        /* rojo fuerte */
+        font-style: italic;
+        font-size: 3rem;
+        text-align: center;
+        font-weight: 500;
+        letter-spacing: 1px;
+        margin-top: 30px;
+    }
+
+    .subtitulo-decorado {
+        font-family: 'Segoe UI', sans-serif;
+        color: #ffffff;
+        font-size: 2rem;
+        display: block;
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        background: linear-gradient(90deg, #b71c1c 0%, #e31e24 50%, #b71c1c 100%);
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: 900;
+        padding: 22px 0;
+        margin-bottom: 60px;
+    }
+
+    @media (max-width: 768px) {
+
+        /* Títulos responsivos */
+        .titulo-decorado {
+            font-size: 2.2rem;
+            margin-top: 18px;
+        }
+
+        .subtitulo-decorado {
+            font-size: 1.3rem;
+            padding: 14px 0;
+            margin-bottom: 36px;
+        }
+
+        .nav-bar {
+            padding: 12px 20px;
+        }
+
+        .section-title {
+            padding: 0 20px;
+        }
+
+        .candidates-sections {
+            padding: 0 20px;
+        }
+
+        .planchas-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .candidates-photos,
+        .candidates-info {
+            grid-template-columns: 1fr;
+        }
+
+        /* Tarjetones más compactos */
+        .plancha-card {
+            padding: 14px;
+        }
+
+        .plancha-header {
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .plancha-chip {
+            font-size: 11px;
+            padding: 5px 9px;
+        }
+
+        .plancha-num {
+            width: 26px;
+            height: 26px;
+            font-size: 11px;
+        }
+
+        /* Imagen del tarjetón 100% ancho contenedor */
+        .imagen-tarjeton img {
+            max-width: 100%;
+        }
+    }
+
+    .section-title {
+        padding: 0 20px;
+    }
+
+    .candidates-sections {
+        padding: 0 20px;
+    }
+
+    .candidates-photos,
+    .candidates-info {
+        grid-template-columns: 1fr;
+    }
+
+    .imagen-tarjeton img {
+        display: block;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 520px;
+        height: auto;
+        transition: transform 0.5s ease;
+    }
+
+    .imagen-tarjeton img:hover {
+        transform: translateY(-10px);
+    }
+
+    .imagen-tarjeton {
+        text-align: center;
+    }
+
+    html,
+    body {
+        overflow-x: hidden;
+    }
+
+    /* Admission section with blurred background */
+    .admission-section {
+        position: relative;
+        min-height: calc(100vh - var(--header-height) - 120px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        overflow: hidden;
+    }
+
+    .admission-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('../public/validacion-background.jpg');
+        background-size: cover;
+        background-position: center 33%;
+        filter: blur(6px);
+        transform: scale(1.05);
+        z-index: 0;
+    }
+
+    .admission-section::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        z-index: 0;
+    }
+
+    .form-card {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 520px;
+        background: #fff;
+        border: 1px solid #e5e5e5;
+        border-radius: 14px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+        padding: 24px;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background: linear-gradient(135deg, #e31e24 0%, #b71c1c 100%);
+        color: #fff;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 12px;
+        margin-bottom: 12px;
+    }
+
+    .form-title { font-size: 24px; font-weight: 700; color: #1a1a1a; margin: 0 0 6px; }
+    .form-subtitle { font-size: 14px; color: #666; margin: 0 0 18px; }
+
+    .form-field { margin-bottom: 16px; }
+    .form-field label { display: block; font-size: 13px; font-weight: 600; color: #333; margin-bottom: 8px; }
+    .form-field select,
+    .form-field input {
+        width: 100%;
+        height: 44px;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        outline: none;
+        transition: border-color .2s ease, box-shadow .2s ease;
+        background: #fff;
+    }
+    .form-field select:focus,
+    .form-field input:focus { border-color: #e31e24; box-shadow: 0 0 0 3px rgba(227,30,36,0.15); }
+    .field-hint { display: block; color: #888; font-size: 12px; margin-top: 6px; }
+    .error { display: block; color: #b71c1c; font-size: 12px; margin-top: 6px; }
+
+    .submit-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        justify-content: center;
+        font-family: "Inter";
+        padding: 12px 16px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #e31e24 0%, #b71c1c 100%);
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: transform .2s ease, box-shadow .2s ease;
+        box-shadow: 0 8px 16px rgba(227, 30, 36, 0.25);
+    }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(227, 30, 36, 0.3); }
+
+    .cancel-btn {
+        display: inline-flex;
+        align-items: center;
+        font-family: "Inter";
+        gap: 8px;
+        width: 100%;
+        justify-content: center;
+        padding: 12px 16px;
+        border-radius: 10px;
+        background-color: gray;
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: transform .2s ease, box-shadow .2s ease;
+        box-shadow: 0 8px 16px rgba(46, 46, 46, 0.25);
+    }
+    .cancel-btn:hover { transform: translateY(-2px)}
+
+    /* Actions row: back + continue */
+    .form-actions { display: flex; gap: 12px; margin-top: 6px; }
+    .form-actions .back-button {
+        flex: 1;
+        justify-content: center;
+        height: 44px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #e31e24 0%, #b71c1c 100%);
+        color: #fff;
+        text-decoration: none;
+        border: none;
+        box-shadow: 0 8px 16px rgba(227, 30, 36, 0.25);
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .form-actions .submit-btn { flex: 2; }
+    .form-actions .cancel-btn { flex: 1; }
+    .form-actions .back-button:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(227, 30, 36, 0.3); }
+
+    @media (max-width: 600px) {
+        .form-card { padding: 18px; border-radius: 12px; }
+        .form-title { font-size: 20px; }
+        .form-actions { flex-direction: column; }
+    }
+</style>
+
+<body>
+    <site-header></site-header>
+
+    <section class="admission-section fade-in">
+        <div class="form-card">
+            <div class="form-header">
+                <div class="badge">
+                    <span class="material-symbols-outlined" aria-hidden="true">how_to_vote</span>
+                    <span>Ingreso a Votación</span>
+                </div>
+                <h2 class="form-title">Verificación de identidad</h2>
+                <p class="form-subtitle">Ingresa tus datos para continuar al tarjetón.</p>
+            </div>
+
+            <form id="admission-form" novalidate>
+                <div class="form-field">
+                    <label for="personType">Tipo de persona</label>
+                    <select id="personType" name="personType" required>
+                        <option value="" selected>Selecciona una opción</option>
+                        <option value="Estudiante">Estudiante</option>
+                        <option value="Docente">Docente</option>
+                        <option value="Egresado">Egresado</option>
+                    </select>
+                </div>
+                <div class="form-field" style="display:none">
+                    <label for="docType">Tipo de documento</label>
+                    <select id="docType" name="docType" required>
+                        <option value="" selected>Selecciona una opción</option>
+                        <option value="CC">Cédula de ciudadanía</option>
+                    </select>
+                    <small class="field-hint">Por ahora solo se admite cédula.</small>
+                </div>
+
+                <div class="form-field">
+                    <label for="docNumber">Número de documento</label>
+                    <input id="docNumber" name="docNumber" type="tel" inputmode="numeric" pattern="[0-9]{5,}" placeholder="Ej: 123456789" required />
+                    <small class="error" id="numberError" hidden>Ingresa un número válido (solo dígitos, mínimo 5).</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="window.location.href='../index.html'">
+                        <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+                        <span>Volver</span>
+                    </button>
+                    <button type="submit" class="submit-btn">
+                        Continuar
+                        <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    </nav>
+
+    <site-footer></site-footer>
+    <script>
+        // Validación sencilla del formulario de admisión
+        (function(){
+            const form = document.getElementById('admission-form');
+            if(!form) return;
+            form.addEventListener('submit', function(e){
+                e.preventDefault();
+                const person = form.personType ? form.personType.value : '';
+                const num = form.docNumber.value.trim();
+                const err = document.getElementById('numberError');
+                const validNum = /^[0-9]{5,}$/.test(num);
+                if(!person){ form.personType && form.personType.focus && form.personType.focus(); return; }
+                if(!validNum){ err.hidden = false; form.docNumber.focus(); return; }
+                err.hidden = true;
+                // Redirección provisional al layout de votación
+                window.location.href = 'votacion_layout.html';
+            });
+        })();
+    </script>
+    <script>
+        // Controla opciones de documento según tipo de persona y valida antes que cualquier otro handler
+        (function(){
+            const form = document.getElementById('admission-form');
+            if(!form) return;
+            const personSel = document.getElementById('personType');
+            const docSel = document.getElementById('docType');
+            const hiddenContainer = docSel ? docSel.closest('[style*="display:none"]') : null;
+            if(!docSel || hiddenContainer){ return; }
+            const err = document.getElementById('numberError');
+
+            const DOC_TYPES = {
+                'Estudiante': [
+                    { value: 'CC', label: 'Cédula de ciudadanía' },
+                    { value: 'TI', label: 'Tarjeta de identidad' }
+                ],
+                'Docente': [
+                    { value: 'CC', label: 'Cédula de ciudadanía' },
+                    { value: 'CE', label: 'Cédula de extranjería' }
+                ],
+                'Egresado': [
+                    { value: 'CC', label: 'Cédula de ciudadanía' },
+                    { value: 'CE', label: 'Cédula de extranjería' }
+                ]
+            };
+
+            function populateDocTypes(kind){
+                const options = DOC_TYPES[kind] || [];
+                docSel.innerHTML = '';
+                const opt0 = document.createElement('option');
+                opt0.value = '';
+                opt0.textContent = options.length ? 'Selecciona una opción' : 'Primero selecciona el tipo de persona';
+                docSel.appendChild(opt0);
+                options.forEach(o=>{
+                    const opt = document.createElement('option');
+                    opt.value = o.value;
+                    opt.textContent = o.label;
+                    docSel.appendChild(opt);
+                });
+                docSel.value = '';
+                docSel.disabled = options.length === 0;
+            }
+
+            populateDocTypes(personSel.value);
+            personSel.addEventListener('change', function(){ populateDocTypes(this.value); });
+
+            // Captura para frenar cualquier otro submit handler si no pasa validación
+            form.addEventListener('submit', function(e){
+                const person = form.personType.value;
+                const type = '';
+                const num = form.docNumber.value.trim();
+                const validNum = /^[0-9]{5,}$/.test(num);
+                if(!person || !validNum){
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    if(!person){ personSel.focus(); return; }
+                    
+                    err.hidden = validNum;
+                    if(!validNum){ form.docNumber.focus(); }
+                    return;
+                }
+                // Si es válido, controlamos la redirección aquí y evitamos duplicidad
+                e.preventDefault();
+                // validación previa superada (persona y documento válidos)
+                e.stopImmediatePropagation();
+                window.location.href = 'votacion_layout.html';
+            }, true);
+        })();
+    </script>
+</body>
+
+</html>
