@@ -1,0 +1,415 @@
+/* Estilos personalizados para Jazzmin con colores FESC */
+
+/* Colores principales del tema */
+:root {
+    --color-primary: #b71c1c;
+    --color-secondary: #e31e24;
+    --color-gradient: linear-gradient(90deg, #b71c1c 0%, #e31e24 50%, #b71c1c 100%);
+    --color-success: #28a745;
+    --color-danger: #dc3545;
+    --color-warning: #ffc107;
+    
+    /* Colores FESC para botones */
+    --fesc-red-primary: #b71c1c;
+    --fesc-red-secondary: #e31e24;
+    --fesc-white: #ffffff;
+}
+
+/* Navbar principal con degradado */
+.main-header.navbar {
+    background: var(--color-gradient) !important;
+}
+
+.navbar-dark {
+    background: var(--color-gradient) !important;
+}
+
+/* Brand/Logo */
+.navbar-brand {
+    color: #ffffff !important;
+}
+
+/* Ocultar el texto del brand "FESC Votaciones - Dashboard" */
+.brand-text {
+    display: none !important;
+}
+
+/* También ocultar variaciones específicas */
+.brand-text.font-weight-light,
+.navbar-brand .brand-text {
+    display: none !important;
+}
+
+/* Fondo blanco para el logo y ajustes del brand-link */
+.brand-link {
+    background-color: var(--fesc-white) !important;
+}
+
+.brand-link .brand-image {
+    background-color: var(--fesc-white) !important;
+}
+
+
+/* Botones primarios */
+.btn-primary {
+    background: var(--color-gradient) !important;
+    border-color: var(--color-primary) !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: #ffffff !important;
+}
+
+/* Botones personalizados del formulario */
+.btn-success,
+.submit-row input[name="_save"] {
+    background-color: var(--color-success) !important;
+    border-color: var(--color-success) !important;
+    color: #ffffff !important;
+}
+
+.btn-success:hover,
+.submit-row input[name="_save"]:hover {
+    background-color: #218838 !important;
+    border-color: #1e7e34 !important;
+    color: #ffffff !important;
+}
+
+.btn-danger,
+.submit-row input[name="_delete"],
+.deletelink {
+    background-color: var(--color-danger) !important;
+    border-color: var(--color-danger) !important;
+    color: #ffffff !important;
+}
+
+.btn-danger:hover,
+.submit-row input[name="_delete"]:hover,
+.deletelink:hover {
+    background-color: #c82333 !important;
+    border-color: #bd2130 !important;
+    color: #ffffff !important;
+}
+
+.btn-warning,
+.submit-row input[name="_addanother"],
+.submit-row input[name="_continue"] {
+    background-color: var(--color-warning) !important;
+    border-color: var(--color-warning) !important;
+    color: #212529 !important;
+}
+
+.btn-warning:hover,
+.submit-row input[name="_addanother"]:hover,
+.submit-row input[name="_continue"]:hover {
+    background-color: #e0a800 !important;
+    border-color: #d39e00 !important;
+    color: #212529 !important;
+}
+
+/* Botones de acción en el admin */
+.btn-outline-success {
+    color: var(--color-success) !important;
+    border-color: var(--color-success) !important;
+}
+
+.btn-outline-success:hover {
+    background-color: var(--color-success) !important;
+    border-color: var(--color-success) !important;
+    color: #ffffff !important;
+}
+
+.btn-outline-danger {
+    color: var(--color-danger) !important;
+    border-color: var(--color-danger) !important;
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--color-danger) !important;
+    border-color: var(--color-danger) !important;
+    color: #ffffff !important;
+}
+
+/* Sobrescribir estilos morados por defecto */
+.btn-secondary {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #ffffff !important;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268 !important;
+    border-color: #545b62 !important;
+    color: #ffffff !important;
+}
+
+/* Enlaces del navbar */
+.navbar-nav .nav-link {
+    color: #ffffff !important;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #f0f0f0 !important;
+}
+
+/* Sidebar activo */
+.nav-sidebar .nav-item .nav-link.active {
+    background-color: var(--color-primary) !important;
+    color: #ffffff !important;
+}
+
+/* Enlaces activos en sidebar */
+.nav-pills .nav-link.active {
+    background-color: var(--color-primary) !important;
+}
+
+/* Cards headers */
+.card-primary .card-header {
+    background: var(--color-gradient) !important;
+    border-color: var(--color-primary) !important;
+    color: #ffffff !important;
+}
+
+/* Formularios focus */
+.form-control:focus {
+    border-color: var(--color-secondary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(183, 28, 28, 0.25) !important;
+}
+
+/* Paginación */
+.page-item.active .page-link {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+}
+
+.page-link {
+    color: var(--color-primary) !important;
+}
+
+.page-link:hover {
+    color: var(--color-secondary) !important;
+    background-color: rgba(183, 28, 28, 0.1) !important;
+}
+
+/* Badges */
+.badge-primary {
+    background: var(--color-gradient) !important;
+}
+
+/* Progress bars */
+.progress-bar {
+    background: var(--color-gradient) !important;
+}
+
+/* Checkboxes y radios personalizados */
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+}
+
+/* Títulos principales */
+.content-header h1 {
+    color: var(--color-primary) !important;
+}
+
+/* Submenu activo */
+.nav-treeview .nav-item .nav-link.active {
+    background-color: var(--color-secondary) !important;
+    color: #ffffff !important;
+}
+
+/* Breadcrumb activo */
+.breadcrumb-item.active {
+    color: var(--color-primary) !important;
+}
+
+/* Login page customization */
+.login-page {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+}
+
+.login-box .card {
+    border-top: 4px solid var(--color-primary) !important;
+}
+
+.login-box .btn-primary {
+    background: var(--color-gradient) !important;
+    border: none !important;
+}
+
+/* Logo en página de login */
+.login-logo img,
+.login-box .card-header img,
+.brand-image {
+    display: block !important;
+    margin: 0 auto !important;
+    max-width: 400px !important;
+    width: 100% !important;
+    height: auto !important;
+}
+
+/* Dropdown menus */
+.dropdown-menu .dropdown-item:hover {
+    background-color: rgba(183, 28, 28, 0.1) !important;
+    color: var(--color-primary) !important;
+}
+
+/* Table striped customization */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(183, 28, 28, 0.03) !important;
+}
+
+/* Alerts personalizados */
+.alert-info {
+    background-color: rgba(227, 30, 36, 0.1) !important;
+    border-color: var(--color-secondary) !important;
+    color: var(--color-primary) !important;
+}
+
+/* Botones de acción "Añadir" */
+.addlink,
+.btn.btn-success,
+.btn-outline-success {
+    background-color: var(--fesc-red-primary) !important;
+    border-color: var(--fesc-red-primary) !important;
+    color: var(--fesc-white) !important;
+}
+
+.addlink:hover,
+.btn.btn-success:hover,
+.btn-outline-success:hover {
+    background-color: var(--fesc-red-secondary) !important;
+    border-color: var(--fesc-red-secondary) !important;
+    color: var(--fesc-white) !important;
+}
+
+/* Botones de "Modificar" */
+.btn.btn-info,
+.btn-outline-info {
+    background-color: var(--fesc-red-secondary) !important;
+    border-color: var(--fesc-red-secondary) !important;
+    color: var(--fesc-white) !important;
+}
+
+.btn.btn-info:hover,
+.btn-outline-info:hover {
+    background-color: var(--fesc-red-primary) !important;
+    border-color: var(--fesc-red-primary) !important;
+    color: var(--fesc-white) !important;
+}
+
+/* Enlaces de navegación activos */
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active,
+.sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active {
+    background-color: var(--fesc-red-primary) !important;
+    color: var(--fesc-white) !important;
+}
+
+/* Encabezados de sección */
+.content-header h1,
+.card-title {
+    color: var(--fesc-red-primary) !important;
+}
+
+/* Eliminar el fondo morado/azul de los botones por defecto */
+.btn-outline-primary {
+    color: var(--fesc-red-primary) !important;
+    border-color: var(--fesc-red-primary) !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--fesc-red-primary) !important;
+    border-color: var(--fesc-red-primary) !important;
+    color: var(--fesc-white) !important;
+}
+
+/* Corregir botones específicos de Jazzmin */
+.main-header .navbar-nav > .nav-item > .nav-link,
+.main-header .navbar-nav .nav-link {
+    color: var(--fesc-white) !important;
+}
+
+/* Botones de paginación */
+.page-link {
+    color: var(--fesc-red-primary) !important;
+}
+
+.page-item.active .page-link {
+    background-color: var(--fesc-red-primary) !important;
+    border-color: var(--fesc-red-primary) !important;
+    color: var(--fesc-white) !important;
+}
+
+/* Botones de acción en listas */
+.btn-group .btn {
+    font-size: 0.875rem !important;
+}
+
+/* Iconos de estado */
+.text-success {
+    color: var(--fesc-red-primary) !important;
+}
+
+/* Inputs de submit específicos por name */
+input[name="_addanother"],
+input[name="_continue"],
+input[name="_save"] {
+    background-color: var(--fesc-red-primary) !important;
+    border-color: var(--fesc-red-primary) !important;
+    color: var(--fesc-white) !important;
+}
+
+input[name="_addanother"]:hover,
+input[name="_continue"]:hover,
+input[name="_save"]:hover {
+    background-color: var(--fesc-red-secondary) !important;
+    border-color: var(--fesc-red-secondary) !important;
+    color: var(--fesc-white) !important;
+}
+
+/* Selectores más específicos para los botones del formulario */
+.submit-row input[type="submit"],
+.submit-row button[type="submit"],
+.form-row input[type="submit"],
+.form-actions input[type="submit"] {
+    background-color: var(--fesc-red-primary) !important;
+    border-color: var(--fesc-red-primary) !important;
+    color: var(--fesc-white) !important;
+}
+
+.submit-row input[type="submit"]:hover,
+.submit-row button[type="submit"]:hover,
+.form-row input[type="submit"]:hover,
+.form-actions input[type="submit"]:hover {
+    background-color: var(--fesc-red-secondary) !important;
+    border-color: var(--fesc-red-secondary) !important;
+    color: var(--fesc-white) !important;
+}
+
+/* Override para cualquier botón que tenga clases de Bootstrap azules/moradas */
+.btn-info, .btn-primary, .btn-secondary {
+    background-color: var(--fesc-red-primary) !important;
+    border-color: var(--fesc-red-primary) !important;
+    color: var(--fesc-white) !important;
+}
+
+.btn-info:hover, .btn-primary:hover, .btn-secondary:hover {
+    background-color: var(--fesc-red-secondary) !important;
+    border-color: var(--fesc-red-secondary) !important;
+    color: var(--fesc-white) !important;
+}
+
+/* Asegurar que los links mantengan el color FESC */
+a {
+    color: var(--fesc-red-primary) !important;
+}
+
+a:hover {
+    color: var(--fesc-red-secondary) !important;
+}

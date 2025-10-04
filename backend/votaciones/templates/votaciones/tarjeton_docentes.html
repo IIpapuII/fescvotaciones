@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarjetón Docentes - FESC Votaciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'><path fill='%23b71c1c' d='M96 32V64H48C21.5 64 0 85.5 0 112v48H448V112c0-26.5-21.5-48-48-48H352V32c0-17.7-14.3-32-32-32s-32 14.3-32 32V64H160V32c0-17.7-14.3-32-32-32S96 14.3 96 32zM448 192H0V464c0 26.5 21.5 48 48 48H400c26.5 0 48-21.5 48-48V192z'/></svg>">
+    <style>
+        :root {
+            --color-primary: #b71c1c;
+            --color-secondary: #e31e24;
+            --color-gradient: linear-gradient(90deg, #b71c1c 0%, #e31e24 50%, #b71c1c 100%);
+        }
+        
+        /* Estructura básica del tarjetón */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container-fluid {
+            max-width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .votacion-info {
+            background: var(--color-primary);
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 0 15px 20px;
+        }
+        
+        .titulo-decorado {
+            text-align: center;
+            margin: 30px 0;
+            font-size: 28px;
+            position: relative;
+        }
+        
+        .titulo-decorado::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: var(--color-secondary);
+            bottom: -5px;
+            left: 0;
+        }
+        
+        .subtitulo-decorado {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 22px;
+            color: var(--color-primary);
+        }
+        
+        .candidates-sections {
+            max-width: 100%;
+            margin: 16px auto 40px;
+            padding: 0 15px; /* Reducido */
+        }
+        
+        .planchas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px; /* Reducido */
+            justify-content: center;
+            max-width: 100%;
+        }
+        
+        .plancha-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 14px; /* Reducido */
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .plancha-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .plancha-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .plancha-chip {
+            background: var(--color-primary);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 16px;
+            font-size: 14px;
+        }
+        
+        .plancha-num {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--color-secondary);
+        }
+        
+        .plancha-nombre {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .imagen-tarjeton {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .imagen-tarjeton img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        
+        .candidatos-info {
+            margin-top: 10px;
+        }
+        
+        .candidato-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .candidato-nombre {
+            font-weight: 500;
+        }
+        
+        .candidato-cargo {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .vote-actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .btn-confirmar {
+            background: var(--color-primary);
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn-confirmar:hover {
+            background: var(--color-secondary);
+        }
+        
+        /* Modal SIMPLIFICADO - Copiar desde tarjeton_estudiantes.html */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.7);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 0;
+            box-shadow: 0 20px 50px rgba(0,0,0,.5);
+            animation: slideUp 0.3s ease;
+            position: relative;
+            z-index: 10000;
+        }
+        
+        .modal-header {
+            background: var(--color-primary);
+            color: #fff;
+            padding: 15px;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            position: relative;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .modal-body {
+            padding: 15px;
+        }
+        
+        .modal-footer {
+            padding: 10px;
+            text-align: right;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .modal-btn.primary {
+            background: var(--color-primary);
+            color: #fff;
+        }
+        
+        .modal-btn.secondary {
+            background: #f44336;
+            color: #fff;
+            margin-right: 10px;
+        }
+        
+        .modal-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .warning-text {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .warning-text i {
+            margin-right: 10px;
+        }
+        
+        /* Responsive mejorado */
+        @media (max-width: 1200px) {
+            .planchas-grid {
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 12px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .candidates-sections { padding: 0 10px; }
+            .votacion-info { margin: 0 10px 15px; }
+        }
+        
+        @media (max-width: 480px) {
+            .candidates-sections { padding: 0 8px; }
+            .votacion-info { margin: 0 8px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="votacion-info">
+            <h4><i class="fas fa-chalkboard-teacher"></i> Votación Docentes</h4>
+            <p class="mb-0">Bienvenido/a: <strong>{{ votante_nombre }}</strong></p>
+            <small class="text-muted">Seleccione una plancha por cada consejo</small>
+        </div>
+
+        <h2 class="titulo-decorado">. Docentes .</h2>
+
+        <form method="post" action="{% url 'votaciones:procesar_voto' %}" id="votacion-form">
+            {% csrf_token %}
+            
+            {% for consejo, planchas in planchas_por_consejo.items %}
+            <section class="candidates-sections">
+                <h2 class="subtitulo-decorado">{{ consejo.nombre }}</h2>
+                <div class="planchas-grid" data-consejo="{{ consejo.id }}">
+                    {% for plancha in planchas %}
+                    <div class="plancha-card" data-consejo="{{ consejo.id }}" data-plancha="{{ plancha.id }}">
+                        <div class="plancha-header">
+                            <span class="plancha-chip">Plancha</span>
+                            <span class="plancha-num">{{ plancha.numero|stringformat:"02d" }}</span>
+                        </div>
+                        
+                        <div class="plancha-nombre">{{ plancha.nombre }}</div>
+                        
+                        {% if plancha.imagen_tarjeton %}
+                        <div class="imagen-tarjeton">
+                            <img src="{{ plancha.imagen_tarjeton.url }}" alt="{{ plancha.nombre }}">
+                        </div>
+                        {% endif %}
+                        
+                        {% if plancha.candidatos.all %}
+                        <div class="candidatos-info">
+                            <h6><i class="fas fa-users"></i> Candidatos:</h6>
+                            {% for candidato in plancha.candidatos.all %}
+                            <div class="candidato-item">
+                                <span class="candidato-nombre">{{ candidato.nombre }}</span>
+                                <span class="candidato-cargo">{{ candidato.get_cargo_display }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <input type="radio" name="voto_{{ consejo.id }}" value="{{ plancha.id }}" style="display: none;">
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center">
+                        <p class="text-muted">No hay planchas disponibles para este consejo</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% empty %}
+            <div class="text-center">
+                <p class="text-muted">No hay planchas disponibles para docentes</p>
+            </div>
+            {% endfor %}
+            
+            <div class="vote-actions">
+                <button type="button" class="btn-confirmar" id="registerVote">
+                    <i class="fas fa-vote-yea"></i> Registrar Voto
+                </button>
+            </div>
+        </form>
+
+        <!-- Modal SIMPLIFICADO - Copiar HTML desde tarjeton_estudiantes.html -->
+        <div class="modal-overlay" id="confirmModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Confirmar Votación
+                    </h3>
+                </div>
+                <div class="modal-body">
+                    <p>Está a punto de registrar su voto con las siguientes selecciones:</p>
+                    
+                    <div class="modal-summary">
+                        <h4><i class="fas fa-check-circle"></i> Resumen de su votación:</h4>
+                        <div id="summaryList"></div>
+                    </div>
+                    
+                    <div class="warning-text">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>¡IMPORTANTE!</strong> Esta acción no se puede deshacer. Una vez confirmado, su voto será registrado permanentemente.
+                    </div>
+                    
+                    <p>¿Está seguro de que desea confirmar su votación?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn secondary" id="cancelConfirm">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button class="modal-btn primary" id="confirmVote">
+                        <i class="fas fa-check"></i> Confirmar Voto
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script SIMPLIFICADO - Copiar desde tarjeton_estudiantes.html -->
+        <script>
+            // Script idéntico al tarjeton_estudiantes.html corregido
+            document.addEventListener('DOMContentLoaded', function() {
+                const registerVoteBtn = document.getElementById('registerVote');
+                const confirmModal = document.getElementById('confirmModal');
+                const cancelConfirmBtn = document.getElementById('cancelConfirm');
+                const confirmVoteBtn = document.getElementById('confirmVote');
+                const summaryList = document.getElementById('summaryList');
+                
+                registerVoteBtn.addEventListener('click', function() {
+                    // Limpiar resumen
+                    summaryList.innerHTML = '';
+                    
+                    let hasError = false;
+                    
+                    // Validar selección por consejo
+                    document.querySelectorAll('.candidates-sections').forEach(section => {
+                        const consejoId = section.querySelector('.planchas-grid').dataset.consejo;
+                        const selectedPlancha = section.querySelector(`input[name="voto_${consejoId}"]:checked`);
+                        
+                        if (selectedPlancha) {
+                            const planchaCard = section.querySelector(`.plancha-card[data-plancha="${selectedPlancha.value}"]`);
+                            const planchaNombre = planchaCard.querySelector('.plancha-nombre').innerText;
+                            
+                            // Agregar al resumen
+                            const summaryItem = document.createElement('div');
+                            summaryItem.classList.add('summary-item', 'mb-2');
+                            summaryItem.innerHTML = `<strong>${section.querySelector('h2').innerText}:</strong> ${planchaNombre}`;
+                            summaryList.appendChild(summaryItem);
+                        } else {
+                            hasError = true;
+                            // Resaltar sección sin selección
+                            section.style.border = '2px solid #f44336';
+                        }
+                    });
+                    
+                    if (hasError) {
+                        // Mostrar mensaje de error (puede ser un toast o un alert)
+                        alert('Por favor, seleccione una plancha para cada consejo.');
+                        return;
+                    }
+                    
+                    // Mostrar modal de confirmación
+                    confirmModal.classList.add('active');
+                });
+                
+                cancelConfirmBtn.addEventListener('click', function() {
+                    confirmModal.classList.remove('active');
+                });
+                
+                confirmVoteBtn.addEventListener('click', function() {
+                    // Enviar formulario
+                    document.getElementById('votacion-form').submit();
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>
