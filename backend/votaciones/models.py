@@ -8,7 +8,11 @@ class Votante(models.Model):
         ('estudiante', 'Estudiante'),
         ('docente', 'Docente'),
         ('graduado', 'Graduado'),
-        ('administrativo', 'Administrativo'),
+    ]
+    TIPO_VOTANTE_CHOICES = [
+        ('presencial', 'Presencial'),
+        ('virtual', 'Virtual'),
+        ('hibrido', 'Híbrido'),
     ]
     
     nombre = models.CharField(max_length=200, verbose_name="Nombre completo")
@@ -17,6 +21,13 @@ class Votante(models.Model):
         max_length=15, 
         choices=TIPO_PERSONA_CHOICES,
         verbose_name="Tipo de persona"
+    )
+    tipo_votante = models.CharField(
+        null=True, 
+        blank=True,
+        max_length=15, 
+        choices=TIPO_VOTANTE_CHOICES,
+        verbose_name="Tipo de votante"
     )
     ya_voto = models.BooleanField(default=False, verbose_name="Ya votó")
     ip_votacion = models.GenericIPAddressField(
@@ -36,6 +47,8 @@ class Votante(models.Model):
         verbose_name = "Votante"
         verbose_name_plural = "Votantes"
         ordering = ['nombre']
+        indexes = [models.Index(fields=['documento']),]
+        unique_together = ['documento', 'tipo_persona']
     
     def __str__(self):
         return f"{self.nombre} - {self.documento}"
@@ -45,7 +58,23 @@ class Votante(models.Model):
         self.ya_voto = True
         self.ip_votacion = ip_address
         self.fecha_voto = timezone.now()
+        
+        # Determinar tipo de votante automáticamente
+        if ip_address is None:
+            self.tipo_votante = 'presencial'
+        else:
+            self.tipo_votante = 'virtual'
+        
         self.save()
+    
+    def get_tipo_voto_display(self):
+        """Retorna una descripción amigable del tipo de voto"""
+        if not self.ya_voto:
+            return "No ha votado"
+        elif self.ip_votacion:
+            return f"Virtual (IP: {self.ip_votacion})"
+        else:
+            return "Físico/Presencial"
 
 class TipoConsejo(models.Model):
     """Tipos de consejos disponibles para votar"""
@@ -110,21 +139,92 @@ class Candidato(models.Model):
         return f"{self.nombre} - {self.cargo} ({self.plancha})"
 
 class Voto(models.Model):
-    """Registro de votos emitidos"""
+    """Registro temporal de votos emitidos - SE ELIMINA AL FINALIZAR PROCESO ELECTORAL"""
     votante = models.ForeignKey(Votante, on_delete=models.CASCADE, verbose_name="Votante")
     plancha = models.ForeignKey(Plancha, on_delete=models.CASCADE, verbose_name="Plancha votada")
     tipo_consejo = models.ForeignKey(TipoConsejo, on_delete=models.CASCADE, verbose_name="Tipo de consejo")
     ip_votacion = models.GenericIPAddressField(verbose_name="IP de votación")
     fecha_voto = models.DateTimeField(auto_now_add=True, verbose_name="Fecha y hora del voto")
     
+    # Campo para marcar si ya fue contabilizado en ResultadoVotacion
+    contabilizado = models.BooleanField(default=False, verbose_name="Ya contabilizado")
+    
     class Meta:
-        verbose_name = "Voto"
-        verbose_name_plural = "Votos"
+        verbose_name = "Voto (Temporal)"
+        verbose_name_plural = "Votos (Temporales)"
         ordering = ['-fecha_voto']
         unique_together = ['votante', 'tipo_consejo']  # Un voto por consejo por votante
     
     def __str__(self):
-        return f"Voto de {self.votante.nombre} - {self.plancha}"
+        return f"Voto temporal de {self.votante.nombre} - {self.plancha}"
+
+class ResultadoVotacion(models.Model):
+    """Tabla principal para conteo de votos sin identificar votantes"""
+    plancha = models.ForeignKey(Plancha, on_delete=models.CASCADE, verbose_name="Plancha")
+    tipo_consejo = models.ForeignKey(TipoConsejo, on_delete=models.CASCADE, verbose_name="Tipo de consejo")
+    tipo_persona = models.CharField(
+        max_length=15,
+        choices=Votante.TIPO_PERSONA_CHOICES,
+        verbose_name="Tipo de votante"
+    )
+    cantidad_votos = models.PositiveIntegerField(default=0, verbose_name="Cantidad de votos")
+    ultima_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Última actualización")
+    
+    class Meta:
+        verbose_name = "Resultado de Votación"
+        verbose_name_plural = "Resultados de Votación"
+        ordering = ['tipo_consejo', 'tipo_persona', '-cantidad_votos']
+        unique_together = ['plancha', 'tipo_consejo', 'tipo_persona']
+    
+    def __str__(self):
+        return f"{self.plancha} - {self.cantidad_votos} votos ({self.get_tipo_persona_display()})"
+    
+    @classmethod
+    def registrar_voto(cls, plancha, tipo_consejo, tipo_persona):
+        """Registra un voto incrementando el contador"""
+        resultado, created = cls.objects.get_or_create(
+            plancha=plancha,
+            tipo_consejo=tipo_consejo,
+            tipo_persona=tipo_persona,
+            defaults={'cantidad_votos': 0}
+        )
+        resultado.cantidad_votos += 1
+        resultado.save()
+        return resultado
+    
+    @classmethod
+    def obtener_resultados_por_consejo(cls, tipo_consejo, tipo_persona):
+        """Obtiene resultados ordenados por cantidad de votos para un consejo específico"""
+        return cls.objects.filter(
+            tipo_consejo=tipo_consejo,
+            tipo_persona=tipo_persona
+        ).select_related('plancha').order_by('-cantidad_votos', 'plancha__numero')
+    
+    @classmethod
+    def contabilizar_votos_pendientes(cls):
+        """Contabiliza votos temporales que no han sido procesados"""
+        votos_pendientes = Voto.objects.filter(contabilizado=False)
+        count = 0
+        
+        for voto in votos_pendientes:
+            cls.registrar_voto(
+                plancha=voto.plancha,
+                tipo_consejo=voto.tipo_consejo,
+                tipo_persona=voto.votante.tipo_persona
+            )
+            voto.contabilizado = True
+            voto.save()
+            count += 1
+        
+        return count
+    
+    @classmethod
+    def limpiar_datos_temporales(cls):
+        """Elimina todos los votos temporales después de contabilizar"""
+        cls.contabilizar_votos_pendientes()
+        count = Voto.objects.count()
+        Voto.objects.all().delete()
+        return count
 
 class EstadisticaVotacion(models.Model):
     """Estadísticas precalculadas para el dashboard"""
@@ -145,8 +245,11 @@ class EstadisticaVotacion(models.Model):
     
     @classmethod
     def actualizar_estadisticas(cls):
-        """Actualiza las estadísticas de votación"""
-        from django.db.models import Count
+        """Actualiza las estadísticas de votación usando ResultadoVotacion"""
+        from django.db.models import Sum
+        
+        # Contabilizar votos pendientes primero
+        ResultadoVotacion.contabilizar_votos_pendientes()
         
         # Obtener o crear registro de estadísticas
         estadistica, created = cls.objects.get_or_create(id=1)

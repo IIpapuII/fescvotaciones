@@ -1,0 +1,46 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Confirmar Voto Físico - {{ site_title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto; padding: 20px;">
+    <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <h2 style="color: #b71c1c; margin-bottom: 20px;">
+            <i class="fas fa-exclamation-triangle"></i> Confirmar Voto Físico
+        </h2>
+        
+        <p>¿Está seguro de que desea marcar a los siguientes votantes como votados físicamente?</p>
+        
+        <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+            {% for votante in votantes %}
+            <div style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">
+                <strong>{{ votante.nombre }}</strong><br>
+                <small>{{ votante.documento }} - {{ votante.get_tipo_persona_display }}</small>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div style="background: #fff3cd; border-radius: 8px; padding: 15px; margin: 20px 0; border: 1px solid #ffeaa7;">
+            <strong>⚠️ Importante:</strong> Esta acción marcará a estos votantes como que ya ejercieron su derecho al voto de forma presencial. No podrán votar nuevamente.
+        </div>
+        
+        <form method="post" style="display: flex; gap: 15px; justify-content: flex-end;">
+            {% csrf_token %}
+            {% for votante in votantes %}
+            <input type="hidden" name="ids" value="{{ votante.id }}">
+            {% endfor %}
+            
+            <a href="{% url 'admin:votaciones_votante_changelist' %}" 
+               style="padding: 10px 20px; background: #6c757d; color: white !important; text-decoration: none; border-radius: 6px;">
+                Cancelar
+            </a>
+            
+            <button type="submit" 
+                    style="padding: 10px 20px; background: #b71c1c; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                <i class="fas fa-check"></i> Confirmar Voto Físico
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

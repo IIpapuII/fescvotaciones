@@ -9,7 +9,7 @@ from datetime import datetime
 import json
 
 from .forms import ValidacionIngresoForm
-from .models import Votante, Plancha, TipoConsejo, Voto, EstadisticaVotacion
+from .models import Votante, Plancha, TipoConsejo, Voto, EstadisticaVotacion, ResultadoVotacion
 
 def get_client_ip(request):
     """Obtiene la IP real del cliente"""
@@ -164,12 +164,25 @@ def procesar_voto(request):
                             
                             # Verificar que no haya votado ya en este consejo
                             if not Voto.objects.filter(votante=votante, tipo_consejo=consejo).exists():
-                                Voto.objects.create(
+                                # Crear voto temporal
+                                voto = Voto.objects.create(
                                     votante=votante,
                                     plancha=plancha,
                                     tipo_consejo=consejo,
                                     ip_votacion=ip_cliente
                                 )
+                                
+                                # Registrar inmediatamente en ResultadoVotacion
+                                ResultadoVotacion.registrar_voto(
+                                    plancha=plancha,
+                                    tipo_consejo=consejo,
+                                    tipo_persona=votante.tipo_persona
+                                )
+                                
+                                # Marcar como contabilizado
+                                voto.contabilizado = True
+                                voto.save()
+                                
                                 votos_procesados += 1
                         except Exception as e:
                             messages.error(request, f'Error procesando voto para {consejo.nombre}: {str(e)}')
@@ -199,38 +212,32 @@ def gracias(request):
     return render(request, 'votaciones/gracias.html')
 
 def dashboard_electoral(request):
-    """Dashboard principal con métricas detalladas"""
-    from django.db.models import Count, Q
+    """Dashboard principal con métricas detalladas usando ResultadoVotacion"""
+    from django.db.models import Sum
     
     # Actualizar estadísticas
     estadisticas = EstadisticaVotacion.actualizar_estadisticas()
     
-    # Obtener resultados detallados por categoría
+    # Obtener resultados detallados por categoría usando ResultadoVotacion
     def obtener_resultados_por_categoria(tipo_persona):
         consejos_data = []
         consejos = TipoConsejo.objects.filter(activo=True)
         
         for consejo in consejos:
-            # Obtener planchas para este consejo y tipo de persona
-            planchas = Plancha.objects.filter(
-                tipo_consejo=consejo,
-                tipo_persona=tipo_persona,
-                activa=True
-            ).annotate(
-                votos_count=Count('voto', filter=Q(voto__votante__tipo_persona=tipo_persona))
-            ).order_by('-votos_count', 'numero')
+            # Obtener resultados para este consejo y tipo de persona
+            resultados = ResultadoVotacion.obtener_resultados_por_consejo(consejo, tipo_persona)
             
             # Calcular total de votos para este consejo
-            total_votos = sum(p.votos_count for p in planchas)
+            total_votos = sum(r.cantidad_votos for r in resultados)
             
             # Preparar datos de planchas con porcentajes
             planchas_data = []
-            for plancha in planchas:
-                porcentaje = (plancha.votos_count / total_votos * 100) if total_votos > 0 else 0
+            for resultado in resultados:
+                porcentaje = (resultado.cantidad_votos / total_votos * 100) if total_votos > 0 else 0
                 planchas_data.append({
-                    'numero': plancha.numero,
-                    'nombre': plancha.nombre,
-                    'votos': plancha.votos_count,
+                    'numero': resultado.plancha.numero,
+                    'nombre': resultado.plancha.nombre,
+                    'votos': resultado.cantidad_votos,
                     'porcentaje': round(porcentaje, 1)
                 })
             
@@ -247,26 +254,39 @@ def dashboard_electoral(request):
     resultados_docentes = obtener_resultados_por_categoria('docente')
     resultados_graduados = obtener_resultados_por_categoria('graduado')
     
-    # Datos para gráficos (manteniendo la lógica existente)
-    votos_por_tipo = Voto.objects.values('votante__tipo_persona').annotate(
-        total=Count('id')
-    ).order_by('-total')
+    # Datos para gráficos usando ResultadoVotacion
+    votos_por_tipo = []
+    for tipo in ['estudiante', 'docente', 'graduado']:
+        total = ResultadoVotacion.objects.filter(tipo_persona=tipo).aggregate(
+            total=Sum('cantidad_votos')
+        )['total'] or 0
+        votos_por_tipo.append({
+            'votante__tipo_persona': tipo,
+            'total': total
+        })
     
-    votos_por_consejo = Voto.objects.values('tipo_consejo__nombre').annotate(
-        total=Count('id')
-    ).order_by('-total')
+    votos_por_consejo = []
+    consejos = TipoConsejo.objects.filter(activo=True)
+    for consejo in consejos:
+        total = ResultadoVotacion.objects.filter(tipo_consejo=consejo).aggregate(
+            total=Sum('cantidad_votos')
+        )['total'] or 0
+        votos_por_consejo.append({
+            'tipo_consejo__nombre': consejo.nombre,
+            'total': total
+        })
     
-    votos_por_plancha = Voto.objects.values(
-        'plancha__numero', 'plancha__nombre', 'plancha__tipo_persona'
-    ).annotate(total=Count('id')).order_by('-total')[:10]
+    votos_por_plancha = ResultadoVotacion.objects.select_related('plancha').values(
+        'plancha__numero', 'plancha__nombre', 'tipo_persona'
+    ).annotate(total=Sum('cantidad_votos')).order_by('-total')[:10]
     
     context = {
         'estadisticas': estadisticas,
         'resultados_estudiantes': resultados_estudiantes,
         'resultados_docentes': resultados_docentes,
         'resultados_graduados': resultados_graduados,
-        'votos_por_tipo': json.dumps(list(votos_por_tipo)),
-        'votos_por_consejo': json.dumps(list(votos_por_consejo)),
+        'votos_por_tipo': json.dumps(votos_por_tipo),
+        'votos_por_consejo': json.dumps(votos_por_consejo),
         'votos_por_plancha': votos_por_plancha,
     }
     
@@ -274,7 +294,7 @@ def dashboard_electoral(request):
 
 @staff_member_required
 def generar_reporte_pdf(request):
-    """Genera reporte PDF con logo de la universidad"""
+    """Genera reporte PDF usando ResultadoVotacion"""
     from reportlab.lib.pagesizes import letter, A4
     from reportlab.lib import colors
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -354,7 +374,7 @@ def generar_reporte_pdf(request):
     story.append(info_table)
     story.append(Spacer(1, 30))
     
-    # Función para agregar resultados por categoría
+    # Función para agregar resultados por categoría usando ResultadoVotacion
     def agregar_categoria_al_reporte(titulo, tipo_persona, icono=""):
         story.append(Paragraph(f"{icono} {titulo.upper()}", heading_style))
         
@@ -363,28 +383,22 @@ def generar_reporte_pdf(request):
         for consejo in consejos:
             story.append(Paragraph(f"<b>{consejo.nombre}</b>", styles['Heading3']))
             
-            # Obtener planchas para este consejo
-            planchas = Plancha.objects.filter(
-                tipo_consejo=consejo,
-                tipo_persona=tipo_persona,
-                activa=True
-            ).annotate(
-                votos_count=Count('voto', filter=Q(voto__votante__tipo_persona=tipo_persona))
-            ).order_by('-votos_count', 'numero')
+            # Obtener resultados para este consejo
+            resultados = ResultadoVotacion.obtener_resultados_por_consejo(consejo, tipo_persona)
             
-            if planchas:
-                total_votos = sum(p.votos_count for p in planchas)
+            if resultados:
+                total_votos = sum(r.cantidad_votos for r in resultados)
                 
                 # Crear tabla con resultados
                 plancha_data = [['Plancha', 'Nombre', 'Votos', 'Porcentaje']]
                 
-                for plancha in planchas:
-                    porcentaje = (plancha.votos_count / total_votos * 100) if total_votos > 0 else 0
-                    ganador = " 👑" if plancha == planchas[0] and plancha.votos_count > 0 else ""
+                for i, resultado in enumerate(resultados):
+                    porcentaje = (resultado.cantidad_votos / total_votos * 100) if total_votos > 0 else 0
+                    ganador = " 👑" if i == 0 and resultado.cantidad_votos > 0 else ""
                     plancha_data.append([
-                        f"#{plancha.numero}{ganador}",
-                        plancha.nombre,
-                        str(plancha.votos_count),
+                        f"#{resultado.plancha.numero}{ganador}",
+                        resultado.plancha.nombre,
+                        str(resultado.cantidad_votos),
                         f"{porcentaje:.1f}%"
                     ])
                 
@@ -427,14 +441,20 @@ def generar_reporte_pdf(request):
 @staff_member_required
 def estadisticas_json(request):
     """API endpoint para actualización de estadísticas en tiempo real"""
-    from django.db.models import Count
+    from django.db.models import Sum
     
     estadisticas = EstadisticaVotacion.actualizar_estadisticas()
     
-    # Datos para gráficos actualizados
-    votos_por_tipo = list(Voto.objects.values('votante__tipo_persona').annotate(
-        total=Count('id')
-    ).order_by('-total'))
+    # Datos para gráficos actualizados usando ResultadoVotacion
+    votos_por_tipo = []
+    for tipo in ['estudiante', 'docente', 'graduado']:
+        total = ResultadoVotacion.objects.filter(tipo_persona=tipo).aggregate(
+            total=Sum('cantidad_votos')
+        )['total'] or 0
+        votos_por_tipo.append({
+            'votante__tipo_persona': tipo,
+            'total': total
+        })
     
     data = {
         'total_votantes': estadisticas.total_votantes,
