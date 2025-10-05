@@ -16,7 +16,7 @@ class VotanteAdmin(admin.ModelAdmin):
     list_display = ['nombre', 'documento', 'tipo_persona', 'tipo_votante', 'ya_voto', 'fecha_voto', 'ip_votacion', 'acciones_jurado']
     list_filter = ['tipo_persona', 'tipo_votante', 'ya_voto', 'fecha_voto']
     search_fields = ['nombre', 'documento']
-    readonly_fields = ['created_at', 'updated_at', 'fecha_voto', 'ya_voto', 'ip_votacion','nombre', 'documento', 'tipo_persona', 'tipo_votante',]
+    # Removemos readonly_fields del nivel de clase
     actions = ['marcar_como_votado_fisico', 'desmarcar_voto']
     
     fieldsets = (
@@ -31,6 +31,26 @@ class VotanteAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    
+    def get_readonly_fields(self, request, obj=None):
+        """Controlar campos readonly según el tipo de usuario"""
+        # Campos que siempre son readonly para todos
+        base_readonly = ['created_at', 'updated_at']
+        
+        if request.user.is_superuser:
+            # Los superusuarios solo tienen readonly los timestamps
+            return base_readonly
+        else:
+            # Los usuarios normales tienen readonly casi todos los campos importantes
+            return base_readonly + [
+                'fecha_voto', 
+                'ya_voto', 
+                'ip_votacion',
+                'nombre', 
+                'documento', 
+                'tipo_persona', 
+                'tipo_votante'
+            ]
     
     def acciones_jurado(self, obj):
         """Botones de acción para el jurado"""
