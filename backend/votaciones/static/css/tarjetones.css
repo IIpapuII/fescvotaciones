@@ -1,0 +1,59 @@
+/* Estilos compartidos para vistas de tarjetones (estudiantes, docentes, graduados) */
+
+/* Subtítulo full-bleed con degradado rojo y texto blanco */
+.candidates-sections .subtitulo-decorado,
+.subtitulo-decorado {
+  font-family: 'Segoe UI', sans-serif;
+  color: #ffffff !important;
+  font-size: 2rem;
+  display: block;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  background: linear-gradient(90deg, #b71c1c 0%, #e31e24 50%, #b71c1c 100%) !important;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 900;
+  padding: 22px 0 !important;
+  margin-bottom: 60px;
+}
+
+/* Imágenes del tarjetón responsivas */
+.imagen-tarjeton { text-align: center; }
+.candidates-sections .imagen-tarjeton img,
+.imagen-tarjeton img {
+  display: block;
+  margin: 0 auto;
+  width: 100% !important;
+  max-width: 520px !important;
+  height: auto !important;
+  transition: transform 0.5s ease;
+}
+.imagen-tarjeton img:hover { transform: translateY(-4px); }
+
+/* Ajustes comunes responsive */
+@media (max-width: 768px) {
+  .titulo-decorado { font-size: 2.2rem; margin-top: 18px; }
+  .candidates-sections .subtitulo-decorado,
+  .subtitulo-decorado { font-size: 1.3rem !important; padding: 14px 0 !important; margin-bottom: 36px !important; }
+
+  .candidates-sections { padding: 0 20px; }
+  .planchas-grid { grid-template-columns: 1fr !important; }
+  .candidates-photos, .candidates-info { grid-template-columns: 1fr !important; }
+
+  .plancha-card { padding: 14px; }
+  .plancha-header { gap: 10px; margin-bottom: 12px; }
+  .plancha-chip { font-size: 11px; padding: 5px 9px; }
+  .plancha-num { width: 26px; height: 26px; font-size: 11px; }
+
+  .candidates-sections .imagen-tarjeton img,
+  .imagen-tarjeton img { max-width: 100% !important; }
+}
+
+@media (max-width: 420px) {
+  .titulo-decorado { font-size: 1.9rem; }
+  .subtitulo-decorado { font-size: 1.15rem; padding: 12px 0; }
+  .plancha-card { padding: 12px; }
+  .plancha-chip { font-size: 10px; }
+  .plancha-num { width: 24px; height: 24px; font-size: 10px; }
+}

@@ -76,7 +76,7 @@
         if(existingCountdown){ existingCountdown.classList.add('countdown-replaced'); existingCountdown.innerHTML = ''; }
         const link = document.createElement('a');
         const underViews = location.pathname.indexOf('/views/') !== -1 || location.pathname.indexOf('\\views\\') !== -1;
-        link.href = underViews ? 'admision_cedula.html' : 'views/admision_cedula.html';
+        link.href = underViews ? '/votaciones/' : '/votaciones/';
         link.className = 'header-cta-btn';
         link.textContent = 'Ir a votación';
         // insert

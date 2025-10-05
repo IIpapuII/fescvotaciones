@@ -23,7 +23,7 @@ from votaciones import views
 urlpatterns = [
     path('admin/dashboard/', views.dashboard_electoral, name='dashboard_electoral'),
     path('admin/', admin.site.urls),
-    path('', include('votaciones.urls')),
+    path('votaciones', include('votaciones.urls')),
 ]
 
 # Servir archivos de media en desarrollo

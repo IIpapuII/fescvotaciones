@@ -56,7 +56,10 @@ ROOT_URLCONF = 'fescvotaciones.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            # Permite cargar plantillas desde la carpeta frontend
+            # BASE_DIR.parent / 'frontend',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -118,7 +121,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / 'frontend',
+    
+    # Archivos estaticos del frontend
+    BASE_DIR.parent / 'frontend' / 'css',
+    BASE_DIR.parent / 'frontend' / 'js',
+    BASE_DIR.parent / 'frontend' / 'public',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
@@ -156,13 +164,13 @@ JAZZMIN_SETTINGS = {
     # Enlaces del menú superior
     "topmenu_links": [
         {"name": "Dashboard", "url": "admin:dashboard", "permissions": ["auth.view_user"], "icon": "fas fa-chart-bar"},
-        {"name": "Ver Sitio", "url": "/", "new_window": True},
+        {"name": "Ver Sitio", "url": "/votacion", "new_window": True},
         {"app": "votaciones"}
     ],
     
     # Enlaces del menú de usuario
     "usermenu_links": [
-        {"name": "Ver Sitio Web", "url": "/", "new_window": True, "icon": "fas fa-external-link-alt"},
+        {"name": "Ver Sitio Web", "url": "/votacion", "new_window": True, "icon": "fas fa-external-link-alt"},
         {"model": "auth.user"}
     ],
     
@@ -209,7 +217,6 @@ JAZZMIN_SETTINGS = {
     },
     
     # Configuraciones adicionales
-    "related_modal_active": True,
     "language_chooser": False,
 }
 
