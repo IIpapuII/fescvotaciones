@@ -1000,7 +1000,7 @@ function actualizarDatos() {
     const indicator = document.getElementById('update-indicator');
     indicator.classList.add('show');
     
-    fetch('{% url "votaciones:estadisticas_json" %}')
+    fetch('{% url "admin:estadisticas_json" %}')
         .then(response => response.json())
         .then(data => {
             // Actualizar números
@@ -1036,6 +1036,30 @@ function actualizarDatos() {
             indicator.classList.remove('show');
         });
 }
+
+// Limpiar mensajes de Django admin si existen
+document.addEventListener('DOMContentLoaded', function() {
+    const djangoMessages = document.querySelectorAll('.messagelist .success, .messagelist .error, .messagelist .warning');
+    
+    if (djangoMessages.length > 0) {
+        // Auto-ocultar mensajes del admin después de 4 segundos
+        setTimeout(function() {
+            djangoMessages.forEach(function(message) {
+                if (message.parentNode) {
+                    message.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateY(-10px)';
+                    
+                    setTimeout(function() {
+                        if (message.parentNode) {
+                            message.parentNode.removeChild(message);
+                        }
+                    }, 200);
+                }
+            });
+        }, 100);
+    }
+});
 
 // Auto-actualizar cada 30 segundos
 setInterval(actualizarDatos, 30000);

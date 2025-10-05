@@ -5,11 +5,11 @@ class ValidacionIngresoForm(forms.Form):
     documento = forms.CharField(
         max_length=20,
         widget=forms.TextInput(attrs={
-            'class': 'form-control form-control-lg',
+            'class': 'form-control',
             'placeholder': 'Ingrese su número de documento',
-            'autofocus': True
+            'autocomplete': 'off'
         }),
-        label="Número de Documento"
+        label='Número de Documento'
     )
     
     def clean_documento(self):
@@ -19,24 +19,29 @@ class ValidacionIngresoForm(forms.Form):
         return documento
     
     def validar_votante(self):
-        """Valida si el votante existe y puede votar"""
-        documento = self.cleaned_data.get('documento')
+        """Valida que el votante exista y pueda votar"""
+        documento = self.cleaned_data['documento']
         
         try:
             votante = Votante.objects.get(documento=documento)
+            
             if votante.ya_voto:
-                raise forms.ValidationError("Este votante ya ha ejercido su derecho al voto.")
+                raise forms.ValidationError(
+                    f'El votante {votante.nombre} ya ha ejercido su derecho al voto el '
+                    f'{votante.fecha_voto.strftime("%d/%m/%Y a las %H:%M")}.'
+                )
+            
+            # NUEVA VALIDACIÓN: Verificar tipo de votante y agregar información
+            if votante.debe_votar_presencial():
+                raise forms.ValidationError(
+                    f'El votante {votante.nombre} está configurado para VOTACIÓN PRESENCIAL. '
+                    f'Debe dirigirse a las urnas físicas para votar. No puede usar el sistema virtual.'
+                )
+            
             return votante
+            
         except Votante.DoesNotExist:
-            raise forms.ValidationError("Número de documento no encontrado en el padrón electoral.")
-        
-        try:
-            votante = Votante.objects.get(
-                documento=documento,
-                tipo_persona=tipo_persona
+            raise forms.ValidationError(
+                'El número de documento ingresado no se encuentra registrado en el sistema electoral. '
+                'Verifique el número e intente nuevamente.'
             )
-            if votante.ya_voto:
-                raise forms.ValidationError("Este votante ya ha ejercido su derecho al voto.")
-            return votante
-        except Votante.DoesNotExist:
-            raise forms.ValidationError("Votante no encontrado o tipo de persona incorrecto.")

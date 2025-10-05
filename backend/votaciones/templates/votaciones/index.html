@@ -559,6 +559,20 @@
         align-items: center;
         display: flex;
         gap: 0.75rem;
+        position: relative;
+        overflow: hidden;
+        opacity: 1;
+        transform: translateY(0);
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+    }
+
+    .alert.fade-out {
+        opacity: 0;
+        transform: translateY(-20px);
+        max-height: 0;
+        padding: 0 1.25rem;
+        margin: 0;
     }
 
     .alert .btn-close {
@@ -567,50 +581,163 @@
         box-shadow: none;
         opacity: 0.7;
         transition: opacity 0.2s;
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .alert .btn-close:hover {
         opacity: 1;
     }
 
+    .alert .btn-close::before {
+        content: '×';
+        font-size: 1.5rem;
+        line-height: 1;
+    }
+
+    /* Estilos específicos por tipo de alerta */
     .alert-success {
         border-color: #198754;
-        background: linear-gradient(90deg, #e9f7ef 80%, #d1f2eb 100%);
-        color: #146c43;
+        background: linear-gradient(90deg, #d4edda 0%, #c3e6cb 100%);
+        color: #0f5132;
+        box-shadow: 0 4px 18px rgba(25, 135, 84, 0.15);
+    }
+
+    .alert-success i {
+        color: #198754;
+    }
+
+    .alert-success .btn-close::before {
+        color: #0f5132;
     }
 
     .alert-danger,
     .alert-error {
         border-color: #dc3545;
-        background: linear-gradient(90deg, #f8d7da 80%, #f5c6cb 100%);
-        color: #b71c1c;
+        background: linear-gradient(90deg, #f8d7da 0%, #f5c6cb 100%);
+        color: #721c24;
+        box-shadow: 0 4px 18px rgba(220, 53, 69, 0.15);
+    }
+
+    .alert-danger i,
+    .alert-error i {
+        color: #dc3545;
+    }
+
+    .alert-danger .btn-close::before,
+    .alert-error .btn-close::before {
+        color: #721c24;
     }
 
     .alert-warning {
-        border-color: #ffc107;
-        background: linear-gradient(90deg, #fff3cd 80%, #ffeeba 100%);
-        color: #856404;
+        border-color: #fd7e14;
+        background: linear-gradient(90deg, #fff3cd 0%, #ffeaa7 100%);
+        color: #664d03;
+        box-shadow: 0 4px 18px rgba(253, 126, 20, 0.15);
+    }
+
+    .alert-warning i {
+        color: #fd7e14;
+    }
+
+    .alert-warning .btn-close::before {
+        color: #664d03;
     }
 
     .alert-info {
         border-color: #0dcaf0;
-        background: linear-gradient(90deg, #cff4fc 80%, #b6effb 100%);
+        background: linear-gradient(90deg, #d1ecf1 0%, #b8daff 100%);
+        color: #055160;
+        box-shadow: 0 4px 18px rgba(13, 202, 240, 0.15);
+    }
+
+    .alert-info i {
+        color: #0dcaf0;
+    }
+
+    .alert-info .btn-close::before {
         color: #055160;
     }
 
-    @media (max-width: 600px) {
-        .alert {
-            font-size: 0.98rem;
-            padding: 0.75rem 0.7rem;
-            gap: 0.5rem;
+    /* Estilos adicionales para casos especiales */
+    .alert-primary {
+        border-color: #0d6efd;
+        background: linear-gradient(90deg, #cfe2ff 0%, #b6d4fe 100%);
+        color: #084298;
+        box-shadow: 0 4px 18px rgba(13, 110, 253, 0.15);
+    }
+
+    .alert-primary i {
+        color: #0d6efd;
+    }
+
+    .alert-primary .btn-close::before {
+        color: #084298;
+    }
+
+    .alert-secondary {
+        border-color: #6c757d;
+        background: linear-gradient(90deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #41464b;
+        box-shadow: 0 4px 18px rgba(108, 117, 125, 0.15);
+    }
+
+    .alert-secondary i {
+        color: #6c757d;
+    }
+
+    .alert-secondary .btn-close::before {
+        color: #41464b;
+    }
+
+    /* Animación de entrada para alertas */
+    .alert.show {
+        animation: slideInDown 0.4s ease-out;
+    }
+
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
     }
 
-    .text-danger {
-        font-size: small;
-        margin-left: 5px;
-        color: #d10606;
+    /* Responsive para alertas */
+    @media (max-width: 600px) {
+        .alert {
+            font-size: 0.98rem;
+            padding: 0.75rem 0.9rem;
+            gap: 0.5rem;
+        }
+
+        .alert i {
+            font-size: 0.9rem;
+        }
+
+        .alert .btn-close {
+            width: 18px;
+            height: 18px;
+            font-size: 1rem;
+        }
+
+        .alert .btn-close::before {
+            font-size: 1.3rem;
+        }
     }
+    
+    // ...existing code...
 </style>
 
 <body>
@@ -629,12 +756,18 @@
                 </p>
             </div>
 
-            {% if messages %} {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            {% if messages %} 
+            <div id="messages-container">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" data-message-id="{{ forloop.counter }}">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-message-id="{{ forloop.counter }}" aria-label="Cerrar">
+                    </button>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %} {% endif %}
+            {% endif %}
 
             <form id="admission-form" method="post">
                 {% csrf_token %}
@@ -652,6 +785,20 @@
                     <div class="info-texto-ingrese text-center text-muted">
                         <i class="fas fa-info-circle me-1"></i>
                         Ingrese su número de documento sin puntos ni espacios
+                    </div>
+                    
+                    <!-- NUEVO: Mensaje informativo sobre tipos de voto -->
+                    <div style="background: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 6px; padding: 10px; margin-top: 10px; font-size: 12px;">
+                        <div style="color: #0066cc; font-weight: 600; margin-bottom: 5px;">
+                            <i class="fas fa-info-circle"></i> Información sobre modalidades de voto:
+                        </div>
+                        <ul style="margin: 0; padding-left: 15px; color: #0066cc;">
+                            <li><strong>Voto Virtual:</strong> Puede votar desde cualquier dispositivo con internet</li>
+                            <li><strong>Voto Presencial:</strong> Debe dirigirse a las urnas físicas habilitadas</li>
+                        </ul>
+                        <div style="margin-top: 8px; font-size: 11px; color: #0066cc;">
+                            Si su perfil está configurado para voto presencial, este sistema le informará y deberá votar en persona.
+                        </div>
                     </div>
                 </div>
                 <div class="form-actions">
@@ -675,6 +822,230 @@
     </section>
 
     <footer class="footer">{% include 'components/footer.html' %}</footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-ocultar mensajes después de tiempos específicos según el tipo
+            const alerts = document.querySelectorAll('.alert');
+            
+            alerts.forEach(function(alert, index) {
+                // Agregar animación de entrada
+                alert.classList.add('show');
+                
+                // Determinar tiempo de auto-ocultado según el tipo
+                let hideDelay = 5000; // Default: 5 segundos
+                
+                if (alert.classList.contains('alert-success')) {
+                    hideDelay = 4000; // 4 segundos para éxito
+                } else if (alert.classList.contains('alert-error') || alert.classList.contains('alert-danger')) {
+                    hideDelay = 8000; // 8 segundos para errores (más tiempo)
+                } else if (alert.classList.contains('alert-warning')) {
+                    hideDelay = 6000; // 6 segundos para advertencias
+                } else if (alert.classList.contains('alert-info')) {
+                    hideDelay = 5000; // 5 segundos para información
+                }
+                
+                // Auto-ocultar con el tiempo correspondiente
+                setTimeout(function() {
+                    hideAlert(alert);
+                }, hideDelay);
+            });
+            
+            // Funcionalidad del botón cerrar
+            const closeButtons = document.querySelectorAll('.btn-close');
+            closeButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const messageId = this.getAttribute('data-message-id');
+                    const alert = document.querySelector(`[data-message-id="${messageId}"]`);
+                    if (alert) {
+                        hideAlert(alert);
+                    }
+                });
+            });
+            
+            // Función para ocultar alerta con animación
+            function hideAlert(alert) {
+                if (!alert.classList.contains('fade-out')) {
+                    alert.classList.add('fade-out');
+                    
+                    // Remover del DOM después de la animación
+                    setTimeout(function() {
+                        if (alert.parentNode) {
+                            alert.parentNode.removeChild(alert);
+                            
+                            // Si no quedan más mensajes, ocultar el contenedor
+                            const container = document.getElementById('messages-container');
+                            if (container && container.children.length === 0) {
+                                container.style.display = 'none';
+                            }
+                        }
+                    }, 300); // Tiempo de la animación CSS
+                }
+            }
+            
+            // Limpiar mensajes al enviar el formulario
+            const form = document.getElementById('admission-form');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    // Mostrar indicador de carga
+                    const submitBtn = form.querySelector('.submit-btn');
+                    if (submitBtn) {
+                        submitBtn.innerHTML = `
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Verificando...
+                        `;
+                        submitBtn.disabled = true;
+                    }
+                    
+                    // Ocultar mensajes existentes inmediatamente
+                    const existingAlerts = document.querySelectorAll('.alert:not(.fade-out)');
+                    existingAlerts.forEach(function(alert) {
+                        hideAlert(alert);
+                    });
+                });
+            }
+            
+            // Limpiar mensajes con múltiples clics (funcionalidad avanzada)
+            let clickCount = 0;
+            let clickTimer = null;
+            
+            document.addEventListener('click', function(e) {
+                // Solo si no es un botón de cerrar o el formulario
+                if (!e.target.classList.contains('btn-close') && 
+                    !e.target.closest('form') && 
+                    !e.target.closest('.alert')) {
+                    
+                    clickCount++;
+                    
+                    // Resetear contador después de 2 segundos
+                    if (clickTimer) {
+                        clearTimeout(clickTimer);
+                    }
+                    
+                    clickTimer = setTimeout(function() {
+                        clickCount = 0;
+                    }, 2000);
+                    
+                    // Después de 3 clics rápidos, limpiar mensajes
+                    if (clickCount >= 3) {
+                        const remainingAlerts = document.querySelectorAll('.alert:not(.fade-out)');
+                        remainingAlerts.forEach(function(alert) {
+                            hideAlert(alert);
+                        });
+                        clickCount = 0;
+                        
+                        // Mostrar feedback visual
+                        const body = document.body;
+                        body.style.transition = 'background-color 0.2s ease';
+                        body.style.backgroundColor = '#f8f9fa';
+                        setTimeout(function() {
+                            body.style.backgroundColor = '';
+                        }, 200);
+                    }
+                }
+            });
+        });
+        
+        // Función global mejorada para limpiar mensajes
+        window.clearMessages = function(type = null) {
+            let selector = '.alert:not(.fade-out)';
+            
+            // Si se especifica un tipo, solo limpiar ese tipo
+            if (type) {
+                selector = `.alert-${type}:not(.fade-out)`;
+            }
+            
+            const alerts = document.querySelectorAll(selector);
+            alerts.forEach(function(alert) {
+                alert.classList.add('fade-out');
+                setTimeout(function() {
+                    if (alert.parentNode) {
+                        alert.parentNode.removeChild(alert);
+                    }
+                }, 300);
+            });
+        };
+        
+        // Función para mostrar mensajes programáticamente
+        window.showMessage = function(message, type = 'info', duration = null) {
+            const container = document.getElementById('messages-container') || 
+                           document.querySelector('.form-card');
+            
+            if (!container) return;
+            
+            // Crear nuevo mensaje
+            const alertDiv = document.createElement('div');
+            const messageId = Date.now();
+            
+            // Iconos por tipo
+            const icons = {
+                'success': 'check-circle',
+                'error': 'exclamation-triangle',
+                'danger': 'exclamation-triangle',
+                'warning': 'exclamation-circle',
+                'info': 'info-circle',
+                'primary': 'info-circle',
+                'secondary': 'info-circle'
+            };
+            
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.setAttribute('role', 'alert');
+            alertDiv.setAttribute('data-message-id', messageId);
+            
+            alertDiv.innerHTML = `
+                <i class="fas fa-${icons[type] || 'info-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-message-id="${messageId}" aria-label="Cerrar"></button>
+            `;
+            
+            container.insertBefore(alertDiv, container.firstChild);
+            
+            // Agregar event listener al botón cerrar
+            const closeBtn = alertDiv.querySelector('.btn-close');
+            closeBtn.addEventListener('click', function() {
+                hideAlert(alertDiv);
+            });
+            
+            // Auto-ocultar según duración o tipo
+            const hideDelay = duration || (type === 'error' || type === 'danger' ? 8000 : 
+                                         type === 'warning' ? 6000 : 
+                                         type === 'success' ? 4000 : 5000);
+            
+            setTimeout(function() {
+                hideAlert(alertDiv);
+            }, hideDelay);
+            
+            function hideAlert(alert) {
+                if (!alert.classList.contains('fade-out')) {
+                    alert.classList.add('fade-out');
+                    setTimeout(function() {
+                        if (alert.parentNode) {
+                            alert.parentNode.removeChild(alert);
+                        }
+                    }, 300);
+                }
+            }
+        };
+        
+        // Limpiar mensajes cuando la página se oculta
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                setTimeout(function() {
+                    if (!document.hidden) return;
+                    
+                    const alerts = document.querySelectorAll('.alert:not(.fade-out)');
+                    alerts.forEach(function(alert) {
+                        alert.classList.add('fade-out');
+                        setTimeout(function() {
+                            if (alert.parentNode) {
+                                alert.parentNode.removeChild(alert);
+                            }
+                        }, 300);
+                    });
+                }, 3000);
+            }
+        });
+    </script>
 </body>
 
 </html>

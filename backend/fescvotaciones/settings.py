@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #'votaciones.middleware.HorarioElectoralMiddleware',  # NUEVO: Middleware de horarios
 ]
 
 ROOT_URLCONF = 'fescvotaciones.urls'
@@ -109,7 +110,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es-es'
 
-TIME_ZONE = 'UTC'
+# Configuración de zona horaria para Colombia
+TIME_ZONE = 'America/Bogota'
 
 USE_I18N = True
 
@@ -164,13 +166,13 @@ JAZZMIN_SETTINGS = {
     # Enlaces del menú superior
     "topmenu_links": [
         {"name": "Dashboard", "url": "admin:dashboard", "permissions": ["auth.view_user"], "icon": "fas fa-chart-bar"},
-        {"name": "Ver Sitio", "url": "/votacion", "new_window": True},
+        {"name": "Ver Sitio", "url": "/votaciones", "new_window": True},
         {"app": "votaciones"}
     ],
     
     # Enlaces del menú de usuario
     "usermenu_links": [
-        {"name": "Ver Sitio Web", "url": "/votacion", "new_window": True, "icon": "fas fa-external-link-alt"},
+        {"name": "Ver Sitio Web", "url": "/votaciones", "new_window": True, "icon": "fas fa-external-link-alt"},
         {"model": "auth.user"}
     ],
     

@@ -13,9 +13,9 @@ from .utils.generar_reporte import generar_reporte_pdf
 
 @admin.register(Votante)
 class VotanteAdmin(admin.ModelAdmin):
-    list_display = ['nombre', 'documento', 'tipo_persona', 'tipo_votante', 'ya_voto', 'fecha_voto', 'ip_votacion', 'acciones_jurado']
-    list_filter = ['tipo_persona', 'tipo_votante', 'ya_voto', 'fecha_voto']
-    search_fields = ['nombre', 'documento']
+    list_display = ['nombre', 'documento', 'tipo_persona', 'tipo_votante', 'ya_voto', 'fecha_voto', 'ip_votacion', 'verificar_tipo_voto', 'acciones_jurado']
+    list_filter = ['tipo_persona', 'tipo_votante', 'ya_voto', 'fecha_voto', 'ip_votacion']
+    search_fields = ['nombre', 'documento', 'ip_votacion']
     # Removemos readonly_fields del nivel de clase
     actions = ['marcar_como_votado_fisico', 'desmarcar_voto']
     
@@ -135,6 +135,43 @@ class VotanteAdmin(admin.ModelAdmin):
             del actions['desmarcar_voto']
         
         return actions
+    
+    def verificar_tipo_voto(self, obj):
+        """Muestra el estado del tipo de voto y posibles conflictos"""
+        if not obj.ya_voto:
+            if obj.tipo_votante == 'presencial':
+                return format_html(
+                    '<span style="color: orange; font-weight: bold;">⚠️ Debe votar presencial</span>'
+                )
+            else:
+                return format_html(
+                    '<span style="color: blue;">📱 Puede votar virtual</span>'
+                )
+        
+        # Ya votó - verificar consistencia
+        if obj.tipo_votante == 'presencial' and obj.ip_votacion:
+            return format_html(
+                '<span style="color: red; font-weight: bold;">❌ CONFLICTO: Presencial con IP</span>'
+            )
+        elif obj.tipo_votante == 'virtual' and not obj.ip_votacion:
+            return format_html(
+                '<span style="color: red; font-weight: bold;">❌ CONFLICTO: Virtual sin IP</span>'
+            )
+        elif obj.tipo_votante == 'presencial':
+            return format_html(
+                '<span style="color: green; font-weight: bold;">✅ Voto presencial válido</span>'
+            )
+        elif obj.tipo_votante == 'virtual':
+            return format_html(
+                '<span style="color: green; font-weight: bold;">✅ Voto virtual válido</span>'
+            )
+        else:
+            return format_html(
+                '<span style="color: gray;">➖ Sin definir</span>'
+            )
+    
+    verificar_tipo_voto.short_description = 'Estado Tipo Voto'
+    verificar_tipo_voto.allow_tags = True
 
 @admin.register(TipoConsejo)
 class TipoConsejoAdmin(admin.ModelAdmin):

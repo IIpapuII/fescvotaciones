@@ -27,13 +27,36 @@ def index(request):
         if form.is_valid():
             try:
                 votante = form.validar_votante()
+                
+                # NUEVA VALIDACIÓN: Verificar si es votante presencial
+                if votante.debe_votar_presencial():
+                    messages.error(
+                        request, 
+                        f'Estimado/a {votante.nombre}, su perfil está configurado para votación PRESENCIAL. '
+                        'Debe dirigirse a las urnas físicas habilitadas en la institución para ejercer su derecho al voto. '
+                        'NO puede votar a través de este sistema virtual. '
+                        'Consulte con el personal electoral sobre la ubicación de las urnas.'
+                    )
+                    
+                    # Log de intento de acceso virtual por votante presencial
+                    import logging
+                    logger = logging.getLogger('votaciones.seguridad')
+                    logger.warning(
+                        f'Intento de acceso virtual bloqueado. Votante presencial: {votante.nombre} '
+                        f'({votante.documento}), Tipo: {votante.tipo_votante}, IP: {get_client_ip(request)}'
+                    )
+                    
+                    # Retornar al formulario con el error
+                    return render(request, 'votaciones/index.html', {'form': form})
+                
+                # Si llegó aquí, es un votante virtual válido
                 # Guardar datos del votante en la sesión
                 request.session['votante_id'] = votante.id
                 request.session['votante_nombre'] = votante.nombre
                 request.session['votante_tipo'] = votante.tipo_persona
                 request.session['votante_documento'] = votante.documento
                 
-                messages.success(request, f'¡Bienvenido/a {votante.nombre}!')
+                messages.success(request, f'¡Bienvenido/a {votante.nombre}! Puede proceder a votar virtualmente.')
                 
                 # Redirigir según el tipo de persona
                 if votante.tipo_persona == 'estudiante':
@@ -56,6 +79,30 @@ def tarjeton_estudiantes(request):
     """Vista de tarjetón para estudiantes"""
     if 'votante_id' not in request.session or request.session.get('votante_tipo') != 'estudiante':
         messages.error(request, 'Acceso no autorizado.')
+        return redirect('votaciones:index')
+    
+    # NUEVA VALIDACIÓN: Verificar que el votante en sesión pueda votar virtualmente
+    try:
+        votante_id = request.session['votante_id']
+        votante = get_object_or_404(Votante, id=votante_id)
+        
+        if votante.debe_votar_presencial():
+            messages.error(
+                request,
+                'Su perfil está configurado para votación presencial. '
+                'No puede acceder al sistema virtual de votación.'
+            )
+            request.session.flush()  # Limpiar sesión
+            return redirect('votaciones:index')
+            
+        if votante.ya_voto:
+            messages.error(request, 'Usted ya ha ejercido su derecho al voto.')
+            request.session.flush()
+            return redirect('votaciones:index')
+            
+    except Exception as e:
+        messages.error(request, 'Error validando acceso. Intente nuevamente.')
+        request.session.flush()
         return redirect('votaciones:index')
     
     # Obtener planchas para estudiantes agrupadas por consejo
@@ -84,6 +131,30 @@ def tarjeton_docentes(request):
         messages.error(request, 'Acceso no autorizado.')
         return redirect('votaciones:index')
     
+    # NUEVA VALIDACIÓN: Verificar que el votante en sesión pueda votar virtualmente
+    try:
+        votante_id = request.session['votante_id']
+        votante = get_object_or_404(Votante, id=votante_id)
+        
+        if votante.debe_votar_presencial():
+            messages.error(
+                request,
+                'Su perfil está configurado para votación presencial. '
+                'No puede acceder al sistema virtual de votación.'
+            )
+            request.session.flush()  # Limpiar sesión
+            return redirect('votaciones:index')
+            
+        if votante.ya_voto:
+            messages.error(request, 'Usted ya ha ejercido su derecho al voto.')
+            request.session.flush()
+            return redirect('votaciones:index')
+            
+    except Exception as e:
+        messages.error(request, 'Error validando acceso. Intente nuevamente.')
+        request.session.flush()
+        return redirect('votaciones:index')
+    
     # Obtener planchas para docentes agrupadas por consejo
     planchas = Plancha.objects.filter(
         tipo_persona='docente',
@@ -108,6 +179,30 @@ def tarjeton_graduados(request):
     """Vista de tarjetón para graduados"""
     if 'votante_id' not in request.session or request.session.get('votante_tipo') != 'graduado':
         messages.error(request, 'Acceso no autorizado.')
+        return redirect('votaciones:index')
+    
+    # NUEVA VALIDACIÓN: Verificar que el votante en sesión pueda votar virtualmente
+    try:
+        votante_id = request.session['votante_id']
+        votante = get_object_or_404(Votante, id=votante_id)
+        
+        if votante.debe_votar_presencial():
+            messages.error(
+                request,
+                'Su perfil está configurado para votación presencial. '
+                'No puede acceder al sistema virtual de votación.'
+            )
+            request.session.flush()  # Limpiar sesión
+            return redirect('votaciones:index')
+            
+        if votante.ya_voto:
+            messages.error(request, 'Usted ya ha ejercido su derecho al voto.')
+            request.session.flush()
+            return redirect('votaciones:index')
+            
+    except Exception as e:
+        messages.error(request, 'Error validando acceso. Intente nuevamente.')
+        request.session.flush()
         return redirect('votaciones:index')
     
     # Obtener planchas para graduados agrupadas por consejo
@@ -149,6 +244,49 @@ def procesar_voto(request):
                 
                 # Obtener IP del cliente
                 ip_cliente = get_client_ip(request)
+                
+                # NUEVA VALIDACIÓN: Verificar si es un votante presencial intentando votar virtualmente
+                if votante.debe_votar_presencial() and ip_cliente:
+                    messages.error(
+                        request, 
+                        'Su perfil está configurado para votación presencial. '
+                        'Debe dirigirse a las urnas físicas para ejercer su derecho al voto. '
+                        'No puede votar a través del sistema virtual.'
+                    )
+                    
+                    # Log de seguridad
+                    import logging
+                    logger = logging.getLogger('votaciones.seguridad')
+                    logger.warning(
+                        f'Intento de voto virtual por votante presencial. '
+                        f'Votante: {votante.nombre} ({votante.documento}), '
+                        f'Tipo configurado: {votante.tipo_votante}, IP: {ip_cliente}'
+                    )
+                    
+                    return redirect('votaciones:index')
+                
+                # Verificar si ya existe un voto desde esta IP (solo para votos virtuales)
+                if ip_cliente and Votante.verificar_ip_duplicada(ip_cliente):
+                    # Obtener información de los votantes previos desde esta IP
+                    votantes_previos = Votante.obtener_votantes_por_ip(ip_cliente)
+                    nombres_previos = [v.nombre for v in votantes_previos[:3]]  # Máximo 3 nombres
+                    
+                    if len(nombres_previos) == 1:
+                        mensaje_error = f'Ya se ha registrado un voto desde esta dirección IP por parte de: {nombres_previos[0]}. Por seguridad, no se permite votar desde la misma IP múltiples veces.'
+                    else:
+                        nombres_texto = ', '.join(nombres_previos[:-1]) + f' y {nombres_previos[-1]}'
+                        if len(votantes_previos) > 3:
+                            nombres_texto += f' (y {len(votantes_previos) - 3} más)'
+                        mensaje_error = f'Ya se han registrado votos desde esta dirección IP por parte de: {nombres_texto}. Por seguridad, no se permite votar desde la misma IP múltiples veces.'
+                    
+                    messages.error(request, mensaje_error)
+                    
+                    # Log de seguridad
+                    import logging
+                    logger = logging.getLogger('votaciones.seguridad')
+                    logger.warning(f'Intento de voto duplicado desde IP {ip_cliente}. Votante: {votante.nombre} ({votante.documento}). Votos previos: {len(votantes_previos)}')
+                    
+                    return redirect('votaciones:index')
                 
                 # Procesar votos por cada consejo
                 votos_procesados = 0
@@ -195,6 +333,12 @@ def procesar_voto(request):
                     # Limpiar sesión
                     request.session.flush()
                     
+                    # Log de voto exitoso
+                    import logging
+                    logger = logging.getLogger('votaciones.exito')
+                    tipo_voto = 'presencial' if ip_cliente is None else 'virtual'
+                    logger.info(f'Voto registrado exitosamente. Votante: {votante.nombre} ({votante.documento}), Tipo: {tipo_voto}, IP: {ip_cliente or "N/A"}, Votos procesados: {votos_procesados}')
+                    
                     messages.success(request, f'¡Su voto ha sido registrado exitosamente! Se procesaron {votos_procesados} votos.')
                     return redirect('votaciones:gracias')
                 else:
@@ -202,6 +346,11 @@ def procesar_voto(request):
                     return redirect('votaciones:index')
                     
         except Exception as e:
+            # Log de error
+            import logging
+            logger = logging.getLogger('votaciones.error')
+            logger.error(f'Error procesando votación. Votante ID: {votante_id}, IP: {get_client_ip(request)}, Error: {str(e)}')
+            
             messages.error(request, f'Error procesando la votación: {str(e)}')
             return redirect('votaciones:index')
     

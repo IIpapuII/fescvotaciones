@@ -1,0 +1,409 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Electoral Fuera de Horario - FESC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #ffffffff 0%, #f2ededff 100%);
+            color: #2d3748;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #b71c1c, #e31e24);
+        }
+        
+        .logo-section {
+            margin-bottom: 30px;
+        }
+        
+        .logo-container {
+            width: 200px;
+            height: auto;
+            margin: 0 auto 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-container svg {
+            width: 100%;
+            height: auto;
+            max-height: 80px;
+        }
+        
+        .clock-icon {
+            font-size: 4rem;
+            color: #ffc107;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #b71c1c;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .current-time {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .time-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .time-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .time-label {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .time-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .next-schedule {
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            border-radius: 8px;
+            padding: 15px;
+            color: #2d5a2d;
+            font-weight: 600;
+        }
+        
+        .schedules-section {
+            margin-bottom: 30px;
+        }
+        
+        .schedule-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #b71c1c;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .schedule-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .schedule-day {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #b71c1c;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .schedule-times {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .schedule-times li {
+            background: white;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #2d3748;
+            border-left: 3px solid #28a745;
+        }
+        
+        .schedule-times li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .info-title {
+            font-weight: 700;
+            color: #856404;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .info-text {
+            color: #856404;
+            line-height: 1.6;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #b71c1c, #e31e24);
+            color: white;
+            box-shadow: 0 4px 15px rgba(183, 28, 28, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+        
+        .refresh-info {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 20px;
+            }
+            
+            .title {
+                font-size: 1.5rem;
+            }
+            
+            .time-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-section">
+            <!-- Logo SVG de FESC -->
+            <div class="logo-container">
+                {% include 'components/logo_svg.html' %}
+            </div>
+            <i class="fas fa-clock clock-icon"></i>
+            <h1 class="title">Sistema Electoral Fuera de Horario</h1>
+            <p class="subtitle">El proceso de votación no está disponible en este momento</p>
+        </div>
+        
+        <div class="current-time">
+            <div class="time-info">
+                <div class="time-item">
+                    <div class="time-label">Fecha Actual</div>
+                    <div class="time-value">{{ fecha_actual }}</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-label">Hora Actual</div>
+                    <div class="time-value">{{ hora_actual }}</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-label">Día</div>
+                    <div class="time-value">{{ dia_semana }}</div>
+                </div>
+            </div>
+            
+            <div class="next-schedule">
+                <i class="fas fa-calendar-clock"></i>
+                <strong>Próximo horario disponible:</strong> {{ proximo_horario }}
+            </div>
+        </div>
+        
+        <div class="schedules-section">
+            <h2 class="schedule-title">
+                <i class="fas fa-calendar-alt"></i>
+                Horarios de Votación Habilitados
+            </h2>
+            
+            <div class="schedule-grid">
+                <div class="schedule-card">
+                    <div class="schedule-day">
+                        <i class="fas fa-calendar-week"></i>
+                        Lunes a Viernes
+                    </div>
+                    <ul class="schedule-times">
+                        {% for horario in horarios_lunes_viernes %}
+                        <li><i class="fas fa-clock"></i> {{ horario }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="schedule-card">
+                    <div class="schedule-day">
+                        <i class="fas fa-calendar-day"></i>
+                        Sábados
+                    </div>
+                    <ul class="schedule-times">
+                        {% for horario in horarios_sabado %}
+                        <li><i class="fas fa-clock"></i> {{ horario }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <div class="info-title">
+                <i class="fas fa-info-circle"></i>
+                Información Importante
+            </div>
+            <div class="info-text">
+                El sistema electoral de FESC solo está disponible durante los horarios establecidos. 
+                Esta restricción garantiza el orden y la supervisión adecuada del proceso electoral institucional.
+            </div>
+        </div>
+        
+        <div class="actions">
+            <a href="javascript:window.location.reload()" class="btn btn-primary">
+                <i class="fas fa-refresh"></i>
+                Verificar Horario Nuevamente
+            </a>
+        </div>
+        
+        <div class="refresh-info">
+            <i class="fas fa-sync-alt"></i>
+            Esta página se actualiza automáticamente cada 60 segundos.
+        </div>
+    </div>
+    
+    <script>
+        // Auto-refresh cada 60 segundos
+        setTimeout(function() {
+            window.location.reload();
+        }, 60000);
+        
+        // Actualizar hora cada segundo
+        function actualizarHora() {
+            const now = new Date();
+            const horaActual = now.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            const elementos = document.querySelectorAll('.time-value');
+            if (elementos.length > 1) {
+                elementos[1].textContent = horaActual;
+            }
+        }
+        
+        setInterval(actualizarHora, 1000);
+    </script>
+</body>
+</html>

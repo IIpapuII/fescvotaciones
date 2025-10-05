@@ -67,6 +67,51 @@ class Votante(models.Model):
         
         self.save()
     
+    @classmethod
+    def verificar_ip_duplicada(cls, ip_address):
+        """Verifica si ya existe un voto desde esta IP"""
+        if ip_address is None:
+            # Los votos presenciales (IP None) no se validan por IP
+            return False
+        
+        return cls.objects.filter(
+            ya_voto=True,
+            ip_votacion=ip_address
+        ).exists()
+    
+    @classmethod
+    def contar_votos_por_ip(cls, ip_address):
+        """Cuenta cuántos votos hay desde una IP específica"""
+        if ip_address is None:
+            return 0
+        
+        return cls.objects.filter(
+            ya_voto=True,
+            ip_votacion=ip_address
+        ).count()
+    
+    @classmethod
+    def obtener_votantes_por_ip(cls, ip_address):
+        """Obtiene todos los votantes que han votado desde una IP específica"""
+        if ip_address is None:
+            return cls.objects.none()
+        
+        return cls.objects.filter(
+            ya_voto=True,
+            ip_votacion=ip_address
+        ).order_by('fecha_voto')
+    
+    def puede_votar_virtual(self):
+        """Verifica si el votante puede votar virtualmente"""
+        # Si ya está configurado como presencial, no puede votar virtual
+        if self.tipo_votante == 'presencial':
+            return False
+        return True
+    
+    def debe_votar_presencial(self):
+        """Verifica si el votante debe votar presencialmente"""
+        return self.tipo_votante == 'presencial'
+    
     def get_tipo_voto_display(self):
         """Retorna una descripción amigable del tipo de voto"""
         if not self.ya_voto:
